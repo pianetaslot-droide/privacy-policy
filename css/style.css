@@ -698,6 +698,58 @@ ul { list-style: none; }
 
 .toast.show { transform: translateX(0); }
 
+/* ========== 语言切换器 ========== */
+.lang-switcher {
+  position: relative;
+  display: inline-block;
+}
+
+.lang-current {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.3);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: .85rem;
+  white-space: nowrap;
+  transition: all .2s;
+}
+
+.lang-current:hover { border-color: var(--accent); }
+
+.lang-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 6px;
+  background: var(--bg-light);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0,0,0,.15);
+  overflow: hidden;
+  display: none;
+  min-width: 140px;
+  z-index: 1001;
+}
+
+.lang-switcher.open .lang-dropdown { display: block; }
+
+.lang-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: .9rem;
+  color: var(--text);
+  transition: background .15s;
+}
+
+.lang-dropdown button:hover { background: var(--bg); }
+.lang-dropdown button.active { background: var(--bg); color: var(--primary); font-weight: 600; }
+
 /* ========== 人性化体验增强 ========== */
 
 /* 平滑滚动 */

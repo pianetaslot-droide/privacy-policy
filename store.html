@@ -3,145 +3,147 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>乐居生活 - 品质家居百货商城</title>
+  <title>乐居生活 - LeJu Living</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<!-- 头部 -->
 <header class="site-header">
   <div class="container header-top">
     <div class="logo">乐居<span>生活</span></div>
     <div class="header-search">
-      <input type="text" id="searchInput" placeholder="搜索商品，如：陶瓷杯、床品四件套...">
-      <button onclick="handleSearch()">搜索</button>
+      <input type="text" id="searchInput">
+      <button onclick="handleSearch()" id="searchBtn"></button>
     </div>
     <div class="header-actions">
-      <a href="login.html" id="userLink">&#x1F464; 登录</a>
-      <a href="cart.html">&#x1F6D2; 购物车 <span class="cart-count" id="cartCount">0</span></a>
+      <div id="langSwitcher"></div>
+      <a href="login.html" id="userLink">&#x1F464;</a>
+      <a href="cart.html">&#x1F6D2; <span id="cartLabel"></span> <span class="cart-count" id="cartCount">0</span></a>
     </div>
   </div>
   <nav class="main-nav">
     <div class="container">
-      <ul>
-        <li><a href="store.html" class="active">首页</a></li>
-        <li><a href="products.html">全部商品</a></li>
-        <li><a href="products.html?cat=kitchen">厨房用品</a></li>
-        <li><a href="products.html?cat=bedroom">卧室家纺</a></li>
-        <li><a href="products.html?cat=bathroom">卫浴用品</a></li>
-        <li><a href="products.html?cat=decor">装饰摆件</a></li>
-        <li><a href="products.html?cat=storage">收纳整理</a></li>
-      </ul>
+      <ul id="mainNav"></ul>
     </div>
   </nav>
 </header>
 
-<!-- Hero -->
 <section class="hero">
   <div class="container">
-    <h1>让生活回归美好</h1>
-    <p>精选家居好物，打造温馨舒适的生活空间</p>
-    <a href="products.html" class="btn btn-primary" style="margin-right:12px">立即选购</a>
-    <a href="products.html?sale=1" class="btn btn-outline">限时特惠</a>
+    <h1 id="heroTitle"></h1>
+    <p id="heroSubtitle"></p>
+    <a href="products.html" class="btn btn-primary" style="margin-right:12px" id="heroShopBtn"></a>
+    <a href="products.html?sale=1" class="btn btn-outline" id="heroSaleBtn"></a>
   </div>
 </section>
 
-<!-- 分类 -->
 <section class="section">
   <div class="container">
-    <h2 class="section-title">热门分类</h2>
-    <p class="section-subtitle">为您精心挑选的家居品类</p>
+    <h2 class="section-title" id="catTitle"></h2>
+    <p class="section-subtitle" id="catSubtitle"></p>
     <div class="categories-grid">
       <a href="products.html?cat=kitchen" class="category-card">
         <div class="category-icon">&#x1F373;</div>
-        <h3>厨房用品</h3>
+        <h3 class="cat-name" data-key="cat_kitchen"></h3>
       </a>
       <a href="products.html?cat=bedroom" class="category-card">
         <div class="category-icon">&#x1F6CF;&#xFE0F;</div>
-        <h3>卧室家纺</h3>
+        <h3 class="cat-name" data-key="cat_bedroom"></h3>
       </a>
       <a href="products.html?cat=bathroom" class="category-card">
         <div class="category-icon">&#x1F6C1;</div>
-        <h3>卫浴用品</h3>
+        <h3 class="cat-name" data-key="cat_bathroom"></h3>
       </a>
       <a href="products.html?cat=decor" class="category-card">
         <div class="category-icon">&#x1F3A8;</div>
-        <h3>装饰摆件</h3>
+        <h3 class="cat-name" data-key="cat_decor"></h3>
       </a>
       <a href="products.html?cat=storage" class="category-card">
         <div class="category-icon">&#x1F4E6;</div>
-        <h3>收纳整理</h3>
+        <h3 class="cat-name" data-key="cat_storage"></h3>
       </a>
       <a href="products.html?cat=lighting" class="category-card">
         <div class="category-icon">&#x1F4A1;</div>
-        <h3>灯具照明</h3>
+        <h3 class="cat-name" data-key="cat_lighting"></h3>
       </a>
     </div>
   </div>
 </section>
 
-<!-- 热销商品 -->
 <section class="section" style="background:#fff">
   <div class="container">
-    <h2 class="section-title">热销推荐</h2>
-    <p class="section-subtitle">本周最受欢迎的家居好物</p>
+    <h2 class="section-title" id="featuredTitle"></h2>
+    <p class="section-subtitle" id="featuredSubtitle"></p>
     <div class="products-grid" id="featuredProducts"></div>
   </div>
 </section>
 
-<!-- 新品上市 -->
 <section class="section">
   <div class="container">
-    <h2 class="section-title">新品上市</h2>
-    <p class="section-subtitle">最新到货的家居精品</p>
+    <h2 class="section-title" id="newTitle"></h2>
+    <p class="section-subtitle" id="newSubtitle"></p>
     <div class="products-grid" id="newProducts"></div>
   </div>
 </section>
 
-<!-- 页脚 -->
 <footer class="site-footer">
   <div class="container">
     <div class="footer-grid">
       <div class="footer-about">
         <div class="logo">乐居<span>生活</span></div>
-        <p>乐居生活百货成立于2020年，致力于为每一个家庭提供高品质、高性价比的家居生活用品。我们精心挑选每一件商品，让您的生活更加舒适美好。</p>
+        <p id="footerAbout"></p>
       </div>
       <div class="footer-col">
-        <h3>购物指南</h3>
+        <h3 id="footerGuideTitle"></h3>
         <ul>
-          <li><a href="#">购物流程</a></li>
-          <li><a href="#">支付方式</a></li>
-          <li><a href="#">发货说明</a></li>
+          <li><a href="#" id="footerGuide1"></a></li>
+          <li><a href="#" id="footerGuide2"></a></li>
+          <li><a href="#" id="footerGuide3"></a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h3>售后服务</h3>
+        <h3 id="footerServiceTitle"></h3>
         <ul>
-          <li><a href="#">退换货政策</a></li>
-          <li><a href="#">售后保障</a></li>
-          <li><a href="#">常见问题</a></li>
+          <li><a href="#" id="footerService1"></a></li>
+          <li><a href="#" id="footerService2"></a></li>
+          <li><a href="#" id="footerService3"></a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h3>联系我们</h3>
+        <h3 id="footerContactTitle"></h3>
         <ul>
-          <li>客服热线：400-888-0000</li>
-          <li>工作时间：9:00-21:00</li>
-          <li>门店地址：幸福路88号</li>
+          <li id="footerContact1"></li>
+          <li id="footerContact2"></li>
+          <li id="footerContact3"></li>
         </ul>
       </div>
     </div>
-    <div class="footer-bottom">
-      &copy; 2026 乐居生活百货 版权所有
-    </div>
+    <div class="footer-bottom" id="footerCopyright"></div>
   </div>
 </footer>
 
-<!-- Toast 提示 -->
 <div class="toast" id="toast"></div>
 
+<script src="js/i18n.js"></script>
 <script src="js/app.js"></script>
 <script>
+  applyPageI18n();
+  // 首页特有文本
+  setText('heroTitle', t('hero_title'));
+  setText('heroSubtitle', t('hero_subtitle'));
+  setText('heroShopBtn', t('hero_shop_now'));
+  setText('heroSaleBtn', t('hero_sale'));
+  setText('catTitle', t('cat_title'));
+  setText('catSubtitle', t('cat_subtitle'));
+  setText('featuredTitle', t('featured_title'));
+  setText('featuredSubtitle', t('featured_subtitle'));
+  setText('newTitle', t('new_title'));
+  setText('newSubtitle', t('new_subtitle'));
+  // 分类名称
+  document.querySelectorAll('.cat-name').forEach(el => {
+    el.textContent = t(el.dataset.key);
+  });
+
   renderProducts('featuredProducts', products.filter(p => p.featured));
   renderProducts('newProducts', products.filter(p => p.isNew));
   updateCartCount();

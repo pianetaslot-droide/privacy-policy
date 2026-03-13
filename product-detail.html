@@ -12,80 +12,78 @@
   <div class="container header-top">
     <div class="logo"><a href="store.html">乐居<span>生活</span></a></div>
     <div class="header-search">
-      <input type="text" id="searchInput" placeholder="搜索商品...">
-      <button onclick="handleSearch()">搜索</button>
+      <input type="text" id="searchInput">
+      <button onclick="handleSearch()" id="searchBtn"></button>
     </div>
     <div class="header-actions">
-      <a href="login.html" id="userLink">&#x1F464; 登录</a>
-      <a href="cart.html">&#x1F6D2; 购物车 <span class="cart-count" id="cartCount">0</span></a>
+      <div id="langSwitcher"></div>
+      <a href="login.html" id="userLink">&#x1F464;</a>
+      <a href="cart.html">&#x1F6D2; <span id="cartLabel"></span> <span class="cart-count" id="cartCount">0</span></a>
     </div>
   </div>
 </header>
 
 <div class="container">
-  <div class="product-detail" id="productDetail">
-    <!-- 由 JS 渲染 -->
-  </div>
+  <div class="product-detail" id="productDetail"></div>
 </div>
 
 <footer class="site-footer">
   <div class="container">
-    <div class="footer-bottom">&copy; 2026 乐居生活百货 版权所有</div>
+    <div class="footer-bottom" id="footerCopyright"></div>
   </div>
 </footer>
 
 <div class="toast" id="toast"></div>
+<script src="js/i18n.js"></script>
 <script src="js/app.js"></script>
 <script>
+  applyPageI18n();
+
   const params = new URLSearchParams(location.search);
   const productId = parseInt(params.get('id'));
   const product = products.find(p => p.id === productId);
 
   if (!product) {
-    document.getElementById('productDetail').innerHTML = '<div style="text-align:center;padding:80px 20px"><h2>商品未找到</h2><p style="margin-top:12px"><a href="products.html" style="color:var(--primary)">返回商品列表</a></p></div>';
+    document.getElementById('productDetail').innerHTML = `<div style="text-align:center;padding:80px 20px"><h2>${t('product_not_found')}</h2><p style="margin-top:12px"><a href="products.html" style="color:var(--primary)">${t('back_to_list')}</a></p></div>`;
   } else {
-    document.title = product.name + ' - 乐居生活';
-    let qty = 1;
+    const name = getProductName(product);
+    const desc = getProductDesc(product);
+    const detail = getProductDetail(product);
+    document.title = name + ' - LeJu Living';
+
     document.getElementById('productDetail').innerHTML = `
       <div class="detail-gallery">${product.icon}</div>
       <div class="detail-info">
-        <h1>${product.name}</h1>
-        <div class="price">&yen;${product.price.toFixed(2)}
-          ${product.originalPrice ? `<span style="font-size:1rem;color:#999;text-decoration:line-through;margin-left:12px">&yen;${product.originalPrice.toFixed(2)}</span>` : ''}
+        <h1>${name}</h1>
+        <div class="price">${formatPrice(product.price)}
+          ${product.originalPrice ? `<span style="font-size:1rem;color:#999;text-decoration:line-through;margin-left:12px">${formatPrice(product.originalPrice)}</span>` : ''}
         </div>
         <div class="meta">
-          <div>分类：${getCategoryName(product.category)}</div>
-          <div>库存：${product.stock > 0 ? '有货' : '暂时缺货'}</div>
-          <div>运费：满99元包邮</div>
+          <div>${t('category_label')}：${getCategoryName(product.category)}</div>
+          <div>${t('stock_label')}：${product.stock > 0 ? t('in_stock') : t('out_of_stock')}</div>
+          <div>${t('shipping_label')}：${t('free_shipping_note')}</div>
         </div>
-        <p style="margin-bottom:24px;line-height:1.8;color:var(--text-light)">${product.description}</p>
+        <p style="margin-bottom:24px;line-height:1.8;color:var(--text-light)">${desc}</p>
         <div class="quantity-selector">
           <button onclick="changeQty(-1)">-</button>
           <input type="number" id="qtyInput" value="1" min="1" max="${product.stock}" onchange="validateQty()">
           <button onclick="changeQty(1)">+</button>
         </div>
         <div class="detail-actions">
-          <button class="btn btn-primary" onclick="addToCart(${product.id}, getQty())">加入购物车</button>
-          <button class="btn btn-outline" style="border-color:var(--primary);color:var(--primary)" onclick="addToCart(${product.id}, getQty()); location.href='cart.html'">立即购买</button>
+          <button class="btn btn-primary" onclick="addToCart(${product.id}, getQty())">${t('add_to_cart')}</button>
+          <button class="btn btn-outline" style="border-color:var(--primary);color:var(--primary)" onclick="addToCart(${product.id}, getQty()); location.href='cart.html'">${t('buy_now')}</button>
         </div>
         <div class="detail-tabs">
           <div class="tab-headers">
-            <button class="active" onclick="switchTab(this, 'tab-desc')">商品详情</button>
-            <button onclick="switchTab(this, 'tab-spec')">规格参数</button>
-            <button onclick="switchTab(this, 'tab-review')">用户评价</button>
+            <button class="active" onclick="switchTab(this, 'tab-desc')">${t('tab_detail')}</button>
+            <button onclick="switchTab(this, 'tab-spec')">${t('tab_spec')}</button>
+            <button onclick="switchTab(this, 'tab-review')">${t('tab_review')}</button>
           </div>
-          <div class="tab-content" id="tab-desc">
-            <p>${product.detail || '暂无详细描述。'}</p>
-          </div>
-          <div class="tab-content" id="tab-spec" style="display:none">
-            <p>品牌：乐居优选<br>产地：中国<br>材质：优质环保材料<br>包装：精美礼盒装</p>
-          </div>
-          <div class="tab-content" id="tab-review" style="display:none">
-            <p>暂无评价，购买后可发表评价。</p>
-          </div>
+          <div class="tab-content" id="tab-desc"><p>${detail || t('no_detail')}</p></div>
+          <div class="tab-content" id="tab-spec" style="display:none"><p>${t('spec_default').replace(/\n/g, '<br>')}</p></div>
+          <div class="tab-content" id="tab-review" style="display:none"><p>${t('no_review')}</p></div>
         </div>
-      </div>
-    `;
+      </div>`;
   }
 
   function getQty() { return parseInt(document.getElementById('qtyInput').value) || 1; }
