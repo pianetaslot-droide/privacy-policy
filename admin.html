@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理后台 - 乐居生活</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<div class="admin-layout">
+  <!-- 侧边栏 -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">&#x1F3E0; 乐居<span>后台</span></div>
+    <nav class="sidebar-nav">
+      <div class="nav-group-title">概览</div>
+      <div class="nav-item active" onclick="showPage('dashboard')">
+        <span class="icon">&#x1F4CA;</span> <span>数据看板</span>
+      </div>
+
+      <div class="nav-group-title">业务管理</div>
+      <div class="nav-item" onclick="showPage('products')">
+        <span class="icon">&#x1F4E6;</span> <span>商品管理</span>
+      </div>
+      <div class="nav-item" onclick="showPage('orders')">
+        <span class="icon">&#x1F4CB;</span> <span>订单管理</span>
+        <span class="badge" id="orderBadge">0</span>
+      </div>
+      <div class="nav-item" onclick="showPage('users')">
+        <span class="icon">&#x1F465;</span> <span>用户管理</span>
+      </div>
+
+      <div class="nav-group-title">系统</div>
+      <div class="nav-item" onclick="location.href='store.html'">
+        <span class="icon">&#x1F310;</span> <span>访问前台</span>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- 主内容 -->
+  <div class="admin-main">
+    <header class="admin-header">
+      <h2 id="pageTitle">数据看板</h2>
+      <div class="header-right">
+        <a href="store.html">&#x1F310; 前台首页</a>
+        <div class="admin-avatar">&#x1F464; 管理员</div>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <!-- ==================== 数据看板 ==================== -->
+      <div id="page-dashboard">
+        <!-- 统计卡片 -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>今日销售额</h3>
+              <div class="number" id="statSales">¥0</div>
+              <div class="trend trend-up" id="statSalesTrend"></div>
+            </div>
+            <div class="stat-icon blue">&#x1F4B0;</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>今日订单</h3>
+              <div class="number" id="statOrders">0</div>
+              <div class="trend trend-up" id="statOrdersTrend"></div>
+            </div>
+            <div class="stat-icon green">&#x1F4E6;</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>注册用户</h3>
+              <div class="number" id="statUsers">0</div>
+              <div class="trend trend-up" id="statUsersTrend"></div>
+            </div>
+            <div class="stat-icon orange">&#x1F465;</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>在售商品</h3>
+              <div class="number" id="statProducts">0</div>
+              <div class="trend" id="statProductsTrend"></div>
+            </div>
+            <div class="stat-icon purple">&#x1F6CD;&#xFE0F;</div>
+          </div>
+        </div>
+
+        <!-- 图表 -->
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3>
+              近7日销售趋势
+              <select onchange="updateSalesChart(this.value)">
+                <option value="7">近7天</option>
+                <option value="30">近30天</option>
+              </select>
+            </h3>
+            <div class="bar-chart" id="salesChart"></div>
+          </div>
+          <div class="chart-card">
+            <h3>品类销售占比</h3>
+            <div class="pie-chart" id="categoryChart"></div>
+          </div>
+        </div>
+
+        <!-- 最新订单 -->
+        <div class="table-card">
+          <div class="table-header">
+            <h3>最新订单</h3>
+            <button class="admin-btn admin-btn-outline admin-btn-sm" onclick="showPage('orders')">查看全部</button>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>订单号</th>
+                <th>客户</th>
+                <th>商品数</th>
+                <th>金额</th>
+                <th>状态</th>
+                <th>时间</th>
+              </tr>
+            </thead>
+            <tbody id="recentOrders"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==================== 商品管理 ==================== -->
+      <div id="page-products" style="display:none">
+        <div class="table-card">
+          <div class="table-header">
+            <h3>商品列表 (<span id="productTotal">0</span>)</h3>
+            <div class="table-actions">
+              <input type="text" class="table-search" placeholder="搜索商品名称..." id="productSearch" oninput="renderProductTable()">
+              <button class="admin-btn admin-btn-primary" onclick="openProductModal()">+ 新增商品</button>
+            </div>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>商品</th>
+                <th>分类</th>
+                <th>价格</th>
+                <th>库存</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="productTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==================== 订单管理 ==================== -->
+      <div id="page-orders" style="display:none">
+        <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+          <div class="stat-card" style="cursor:pointer" onclick="filterOrderStatus('')">
+            <div class="stat-info"><h3>全部订单</h3><div class="number" id="orderAll">0</div></div>
+          </div>
+          <div class="stat-card" style="cursor:pointer" onclick="filterOrderStatus('待支付')">
+            <div class="stat-info"><h3>待支付</h3><div class="number" id="orderPending">0</div></div>
+            <div class="stat-icon orange">&#x23F3;</div>
+          </div>
+          <div class="stat-card" style="cursor:pointer" onclick="filterOrderStatus('已发货')">
+            <div class="stat-info"><h3>已发货</h3><div class="number" id="orderShipped">0</div></div>
+            <div class="stat-icon blue">&#x1F69A;</div>
+          </div>
+          <div class="stat-card" style="cursor:pointer" onclick="filterOrderStatus('已完成')">
+            <div class="stat-info"><h3>已完成</h3><div class="number" id="orderDone">0</div></div>
+            <div class="stat-icon green">&#x2705;</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-header">
+            <h3>订单列表</h3>
+            <div class="table-actions">
+              <input type="text" class="table-search" placeholder="搜索订单号/客户..." id="orderSearch" oninput="renderOrderTable()">
+            </div>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>订单号</th>
+                <th>客户</th>
+                <th>收货人</th>
+                <th>商品</th>
+                <th>金额</th>
+                <th>支付方式</th>
+                <th>状态</th>
+                <th>时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="orderTableBody"></tbody>
+          </table>
+          <div class="empty-state" id="orderEmpty" style="display:none">
+            <div class="icon">&#x1F4CB;</div>
+            <p>暂无订单数据</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 用户管理 ==================== -->
+      <div id="page-users" style="display:none">
+        <div class="table-card">
+          <div class="table-header">
+            <h3>用户列表 (<span id="userTotal">0</span>)</h3>
+            <div class="table-actions">
+              <input type="text" class="table-search" placeholder="搜索用户..." id="userSearch" oninput="renderUserTable()">
+            </div>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>昵称</th>
+                <th>手机号</th>
+                <th>邮箱</th>
+                <th>订单数</th>
+                <th>消费总额</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="userTableBody"></tbody>
+          </table>
+          <div class="empty-state" id="userEmpty" style="display:none">
+            <div class="icon">&#x1F465;</div>
+            <p>暂无注册用户</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- 商品编辑模态框 -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">新增商品</h3>
+      <button class="modal-close" onclick="closeProductModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editId">
+      <div class="admin-form-row">
+        <div class="admin-form-group">
+          <label>商品名称 *</label>
+          <input type="text" id="editName" placeholder="请输入商品名称">
+        </div>
+        <div class="admin-form-group">
+          <label>图标 Emoji</label>
+          <input type="text" id="editIcon" placeholder="如 🍵" maxlength="4">
+        </div>
+      </div>
+      <div class="admin-form-row">
+        <div class="admin-form-group">
+          <label>分类 *</label>
+          <select id="editCategory">
+            <option value="kitchen">厨房用品</option>
+            <option value="bedroom">卧室家纺</option>
+            <option value="bathroom">卫浴用品</option>
+            <option value="decor">装饰摆件</option>
+            <option value="storage">收纳整理</option>
+            <option value="lighting">灯具照明</option>
+          </select>
+        </div>
+        <div class="admin-form-group">
+          <label>库存 *</label>
+          <input type="number" id="editStock" placeholder="0" min="0">
+        </div>
+      </div>
+      <div class="admin-form-row">
+        <div class="admin-form-group">
+          <label>售价 (¥) *</label>
+          <input type="number" id="editPrice" placeholder="0.00" step="0.01" min="0">
+        </div>
+        <div class="admin-form-group">
+          <label>原价 (¥)</label>
+          <input type="number" id="editOrigPrice" placeholder="留空则不显示划线价" step="0.01" min="0">
+        </div>
+      </div>
+      <div class="admin-form-group">
+        <label>简介</label>
+        <textarea id="editDesc" rows="2" placeholder="商品简短描述"></textarea>
+      </div>
+      <div class="admin-form-group">
+        <label>详细描述</label>
+        <textarea id="editDetail" rows="3" placeholder="商品详细描述"></textarea>
+      </div>
+      <div class="admin-form-row">
+        <div class="admin-form-group">
+          <label>标签</label>
+          <input type="text" id="editBadge" placeholder="如：热卖、新品、特惠">
+        </div>
+        <div class="admin-form-group">
+          <label>特殊标记</label>
+          <select id="editFlags">
+            <option value="">无</option>
+            <option value="featured">热销推荐</option>
+            <option value="new">新品</option>
+            <option value="both">热销+新品</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="admin-btn admin-btn-outline" onclick="closeProductModal()">取消</button>
+      <button class="admin-btn admin-btn-primary" onclick="saveProduct()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 订单详情模态框 -->
+<div class="modal-overlay" id="orderDetailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>订单详情</h3>
+      <button class="modal-close" onclick="closeOrderDetail()">&times;</button>
+    </div>
+    <div class="modal-body" id="orderDetailBody"></div>
+    <div class="modal-footer">
+      <button class="admin-btn admin-btn-outline" onclick="closeOrderDetail()">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="admin-toast" id="adminToast"></div>
+
+<script>
+// ==================== 数据源 ====================
+// 引用前台的商品数据
+const catNames = { kitchen: '厨房用品', bedroom: '卧室家纺', bathroom: '卫浴用品', decor: '装饰摆件', storage: '收纳整理', lighting: '灯具照明' };
+
+function getAdminProducts() {
+  // 优先从 localStorage 读取管理员修改过的数据，否则用默认数据
+  const saved = localStorage.getItem('leju_admin_products');
+  if (saved) return JSON.parse(saved);
+  // 默认商品数据
+  return [
+    { id:1, name:'日式手工陶瓷杯', category:'kitchen', icon:'🍵', price:39.90, originalPrice:59.90, stock:120, featured:true, isNew:false, description:'采用传统手工拉坯工艺，温润如玉的釉面触感', badge:'热卖', active:true },
+    { id:2, name:'北欧风不锈钢刀具套装', category:'kitchen', icon:'🔪', price:168.00, originalPrice:238.00, stock:45, featured:true, isNew:false, description:'德国工艺不锈钢锻造', badge:'特惠', active:true },
+    { id:3, name:'珐琅彩搪瓷炖锅', category:'kitchen', icon:'🍲', price:259.00, originalPrice:359.00, stock:30, featured:false, isNew:true, description:'精铸铁胎搪瓷锅', badge:'新品', active:true },
+    { id:4, name:'竹木砧板三件套', category:'kitchen', icon:'🪵', price:78.00, originalPrice:null, stock:200, featured:false, isNew:false, description:'天然整竹制作', badge:'', active:true },
+    { id:5, name:'全棉四件套（云朵白）', category:'bedroom', icon:'🛏️', price:299.00, originalPrice:459.00, stock:60, featured:true, isNew:false, description:'60支长绒棉面料', badge:'爆款', active:true },
+    { id:6, name:'记忆棉护颈枕', category:'bedroom', icon:'💤', price:129.00, originalPrice:199.00, stock:80, featured:true, isNew:false, description:'慢回弹太空记忆棉', badge:'好评如潮', active:true },
+    { id:7, name:'法兰绒加厚毛毯', category:'bedroom', icon:'🧶', price:89.00, originalPrice:139.00, stock:100, featured:false, isNew:true, description:'双面法兰绒材质', badge:'', active:true },
+    { id:8, name:'智能感应皂液器', category:'bathroom', icon:'🧴', price:69.00, originalPrice:99.00, stock:150, featured:false, isNew:true, description:'红外自动感应出泡', badge:'新品', active:true },
+    { id:9, name:'日式天然硅藻泥地垫', category:'bathroom', icon:'🧽', price:58.00, originalPrice:79.00, stock:90, featured:true, isNew:false, description:'天然硅藻土材质', badge:'', active:true },
+    { id:10, name:'旋转置物架（免钉）', category:'bathroom', icon:'🗄️', price:45.00, originalPrice:null, stock:200, featured:false, isNew:false, description:'360度旋转设计', badge:'', active:true },
+    { id:11, name:'北欧风干花花瓶套装', category:'decor', icon:'🏺', price:88.00, originalPrice:128.00, stock:55, featured:true, isNew:false, description:'磨砂玻璃花瓶配永生干花', badge:'颜值担当', active:true },
+    { id:12, name:'创意小夜灯（月球）', category:'decor', icon:'🌙', price:49.00, originalPrice:79.00, stock:120, featured:false, isNew:true, description:'3D打印月球表面纹理', badge:'', active:true },
+    { id:13, name:'棉麻折叠收纳箱（3只装）', category:'storage', icon:'📦', price:55.00, originalPrice:85.00, stock:180, featured:true, isNew:false, description:'加厚棉麻面料', badge:'实用之选', active:true },
+    { id:14, name:'桌面文具收纳盒', category:'storage', icon:'✏️', price:35.00, originalPrice:null, stock:200, featured:false, isNew:true, description:'多格分区设计', badge:'', active:true },
+    { id:15, name:'LED护眼台灯', category:'lighting', icon:'💡', price:158.00, originalPrice:228.00, stock:40, featured:false, isNew:true, description:'无频闪无蓝光危害', badge:'护眼推荐', active:true },
+    { id:16, name:'复古实木小吊灯', category:'lighting', icon:'🪔', price:199.00, originalPrice:299.00, stock:25, featured:true, isNew:false, description:'日式原木灯罩+铁艺灯架', badge:'', active:true },
+  ];
+}
+
+function saveAdminProducts(data) {
+  localStorage.setItem('leju_admin_products', JSON.stringify(data));
+}
+
+function getOrders() {
+  return JSON.parse(localStorage.getItem('leju_orders') || '[]');
+}
+
+function saveOrders(orders) {
+  localStorage.setItem('leju_orders', JSON.stringify(orders));
+}
+
+function getUsers() {
+  return JSON.parse(localStorage.getItem('leju_users') || '[]');
+}
+
+// ==================== 页面切换 ====================
+function showPage(page) {
+  document.querySelectorAll('[id^="page-"]').forEach(el => el.style.display = 'none');
+  document.getElementById('page-' + page).style.display = 'block';
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+
+  const titles = { dashboard: '数据看板', products: '商品管理', orders: '订单管理', users: '用户管理' };
+  document.getElementById('pageTitle').textContent = titles[page] || '';
+
+  if (page === 'dashboard') renderDashboard();
+  if (page === 'products') renderProductTable();
+  if (page === 'orders') renderOrderTable();
+  if (page === 'users') renderUserTable();
+}
+
+function adminToast(msg) {
+  const el = document.getElementById('adminToast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// ==================== 数据看板 ====================
+function renderDashboard() {
+  const orders = getOrders();
+  const users = getUsers();
+  const prods = getAdminProducts();
+
+  // 统计
+  let totalSales = 0;
+  orders.forEach(o => {
+    o.items.forEach(item => {
+      const p = prods.find(pr => pr.id === item.id);
+      if (p) totalSales += p.price * item.qty;
+    });
+  });
+
+  document.getElementById('statSales').textContent = '¥' + totalSales.toFixed(2);
+  document.getElementById('statSalesTrend').textContent = totalSales > 0 ? '↑ 持续增长' : '';
+  document.getElementById('statOrders').textContent = orders.length;
+  document.getElementById('statOrdersTrend').textContent = orders.length > 0 ? '↑ ' + orders.length + ' 笔' : '';
+  document.getElementById('statUsers').textContent = users.length;
+  document.getElementById('statUsersTrend').textContent = users.length > 0 ? '共 ' + users.length + ' 人' : '';
+  document.getElementById('statProducts').textContent = prods.filter(p => p.active !== false).length;
+  document.getElementById('statProductsTrend').textContent = prods.length + ' 款在库';
+
+  // 订单待处理数
+  const pending = orders.filter(o => o.status === '待支付').length;
+  document.getElementById('orderBadge').textContent = pending;
+  document.getElementById('orderBadge').style.display = pending > 0 ? 'inline' : 'none';
+
+  // 销售柱状图
+  updateSalesChart('7');
+
+  // 品类占比
+  renderCategoryChart(orders, prods);
+
+  // 最新订单
+  renderRecentOrders(orders, prods);
+}
+
+function updateSalesChart(days) {
+  const chart = document.getElementById('salesChart');
+  const d = parseInt(days);
+  // 模拟数据
+  const data = [];
+  const orders = getOrders();
+  const prods = getAdminProducts();
+  for (let i = d - 1; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    const label = (date.getMonth() + 1) + '/' + date.getDate();
+    // 简单按日期匹配
+    let daySales = 0;
+    if (i === 0) { // 今天
+      orders.forEach(o => {
+        o.items.forEach(item => {
+          const p = prods.find(pr => pr.id === item.id);
+          if (p) daySales += p.price * item.qty;
+        });
+      });
+    } else {
+      daySales = Math.random() * 800 + 100; // 模拟历史
+    }
+    data.push({ label, value: daySales });
+  }
+
+  const maxVal = Math.max(...data.map(d => d.value), 1);
+  chart.innerHTML = data.map(d => `
+    <div class="bar-group">
+      <div class="bar" style="height:${(d.value / maxVal) * 180}px" title="¥${d.value.toFixed(0)}"></div>
+      <div class="bar-label">${d.label}</div>
+    </div>
+  `).join('');
+}
+
+function renderCategoryChart(orders, prods) {
+  const catSales = {};
+  orders.forEach(o => {
+    o.items.forEach(item => {
+      const p = prods.find(pr => pr.id === item.id);
+      if (p) {
+        catSales[p.category] = (catSales[p.category] || 0) + p.price * item.qty;
+      }
+    });
+  });
+
+  // 补充无销售的分类
+  Object.keys(catNames).forEach(k => {
+    if (!catSales[k]) catSales[k] = Math.random() * 500 + 50; // 模拟
+  });
+
+  const total = Object.values(catSales).reduce((a, b) => a + b, 0);
+  const colors = ['#2d6a4f', '#40916c', '#d4a373', '#e9c46a', '#1890ff', '#722ed1'];
+  const entries = Object.entries(catSales).sort((a, b) => b[1] - a[1]);
+
+  document.getElementById('categoryChart').innerHTML = entries.map(([cat, val], i) => {
+    const pct = total > 0 ? ((val / total) * 100).toFixed(1) : '0';
+    return `
+    <div class="pie-item">
+      <div class="pie-color" style="background:${colors[i % colors.length]}"></div>
+      <div style="flex:1">
+        <div style="display:flex;justify-content:space-between">
+          <span class="pie-label">${catNames[cat] || cat}</span>
+          <span class="pie-value">${pct}%</span>
+        </div>
+        <div class="pie-bar"><div class="pie-bar-fill" style="width:${pct}%;background:${colors[i % colors.length]}"></div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderRecentOrders(orders, prods) {
+  const tbody = document.getElementById('recentOrders');
+  const recent = orders.slice(-5).reverse();
+
+  if (recent.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#8c8c8c;padding:32px">暂无订单数据，前台下单后这里将自动显示</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = recent.map(o => {
+    let amount = 0;
+    o.items.forEach(item => {
+      const p = prods.find(pr => pr.id === item.id);
+      if (p) amount += p.price * item.qty;
+    });
+    const statusClass = o.status === '已完成' ? 'status-success' : o.status === '已发货' ? 'status-info' : o.status === '已取消' ? 'status-danger' : 'status-warning';
+    return `<tr>
+      <td><strong>${o.id}</strong></td>
+      <td>${o.address ? o.address.name : '-'}</td>
+      <td>${o.items.length} 件</td>
+      <td>¥${amount.toFixed(2)}</td>
+      <td><span class="status ${statusClass}">${o.status}</span></td>
+      <td style="color:#8c8c8c">${o.time}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ==================== 商品管理 ====================
+function renderProductTable() {
+  const prods = getAdminProducts();
+  const search = (document.getElementById('productSearch')?.value || '').trim().toLowerCase();
+  const filtered = search ? prods.filter(p => p.name.toLowerCase().includes(search)) : prods;
+
+  document.getElementById('productTotal').textContent = filtered.length;
+  const tbody = document.getElementById('productTableBody');
+
+  tbody.innerHTML = filtered.map(p => `
+    <tr>
+      <td>#${p.id}</td>
+      <td><span style="font-size:1.2rem;margin-right:8px">${p.icon || ''}</span> ${p.name}</td>
+      <td>${catNames[p.category] || p.category}</td>
+      <td><strong>¥${p.price.toFixed(2)}</strong>${p.originalPrice ? `<br><small style="color:#999;text-decoration:line-through">¥${p.originalPrice.toFixed(2)}</small>` : ''}</td>
+      <td>${p.stock}${p.stock <= 10 ? ' <span style="color:var(--admin-danger);font-size:.8rem">低库存</span>' : ''}</td>
+      <td><span class="status ${p.active !== false ? 'status-success' : 'status-default'}">${p.active !== false ? '在售' : '已下架'}</span></td>
+      <td>
+        <button class="admin-btn-icon" title="编辑" onclick="editProduct(${p.id})">&#x270F;&#xFE0F;</button>
+        <button class="admin-btn-icon" title="${p.active !== false ? '下架' : '上架'}" onclick="toggleProduct(${p.id})">${p.active !== false ? '&#x23F8;' : '&#x25B6;'}</button>
+        <button class="admin-btn-icon" title="删除" onclick="deleteProduct(${p.id})" style="color:var(--admin-danger)">&#x1F5D1;</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function openProductModal(product) {
+  document.getElementById('modalTitle').textContent = product ? '编辑商品' : '新增商品';
+  document.getElementById('editId').value = product ? product.id : '';
+  document.getElementById('editName').value = product ? product.name : '';
+  document.getElementById('editIcon').value = product ? (product.icon || '') : '';
+  document.getElementById('editCategory').value = product ? product.category : 'kitchen';
+  document.getElementById('editStock').value = product ? product.stock : '';
+  document.getElementById('editPrice').value = product ? product.price : '';
+  document.getElementById('editOrigPrice').value = product?.originalPrice || '';
+  document.getElementById('editDesc').value = product ? (product.description || '') : '';
+  document.getElementById('editDetail').value = product ? (product.detail || '') : '';
+  document.getElementById('editBadge').value = product ? (product.badge || '') : '';
+  const flags = product ? (product.featured && product.isNew ? 'both' : product.featured ? 'featured' : product.isNew ? 'new' : '') : '';
+  document.getElementById('editFlags').value = flags;
+  document.getElementById('productModal').classList.add('show');
+}
+
+function closeProductModal() {
+  document.getElementById('productModal').classList.remove('show');
+}
+
+function saveProduct() {
+  const name = document.getElementById('editName').value.trim();
+  const price = parseFloat(document.getElementById('editPrice').value);
+  const stock = parseInt(document.getElementById('editStock').value);
+
+  if (!name) { adminToast('请输入商品名称'); return; }
+  if (isNaN(price) || price <= 0) { adminToast('请输入有效的价格'); return; }
+  if (isNaN(stock) || stock < 0) { adminToast('请输入有效的库存'); return; }
+
+  const prods = getAdminProducts();
+  const editId = document.getElementById('editId').value;
+  const flags = document.getElementById('editFlags').value;
+  const origPrice = parseFloat(document.getElementById('editOrigPrice').value) || null;
+
+  const data = {
+    name,
+    icon: document.getElementById('editIcon').value || '📦',
+    category: document.getElementById('editCategory').value,
+    price,
+    originalPrice: origPrice,
+    stock,
+    description: document.getElementById('editDesc').value,
+    detail: document.getElementById('editDetail').value,
+    badge: document.getElementById('editBadge').value,
+    featured: flags === 'featured' || flags === 'both',
+    isNew: flags === 'new' || flags === 'both',
+    active: true,
+  };
+
+  if (editId) {
+    const idx = prods.findIndex(p => p.id === parseInt(editId));
+    if (idx >= 0) Object.assign(prods[idx], data);
+    adminToast('商品已更新');
+  } else {
+    data.id = prods.length > 0 ? Math.max(...prods.map(p => p.id)) + 1 : 1;
+    prods.push(data);
+    adminToast('商品已添加');
+  }
+
+  saveAdminProducts(prods);
+  closeProductModal();
+  renderProductTable();
+}
+
+function editProduct(id) {
+  const prods = getAdminProducts();
+  const p = prods.find(pr => pr.id === id);
+  if (p) openProductModal(p);
+}
+
+function toggleProduct(id) {
+  const prods = getAdminProducts();
+  const p = prods.find(pr => pr.id === id);
+  if (p) {
+    p.active = p.active === false ? true : false;
+    saveAdminProducts(prods);
+    renderProductTable();
+    adminToast(p.active ? '商品已上架' : '商品已下架');
+  }
+}
+
+function deleteProduct(id) {
+  if (!confirm('确定要删除这个商品吗？此操作不可恢复。')) return;
+  let prods = getAdminProducts().filter(p => p.id !== id);
+  saveAdminProducts(prods);
+  renderProductTable();
+  adminToast('商品已删除');
+}
+
+// ==================== 订单管理 ====================
+let currentOrderFilter = '';
+
+function filterOrderStatus(status) {
+  currentOrderFilter = status;
+  renderOrderTable();
+}
+
+function renderOrderTable() {
+  const orders = getOrders();
+  const prods = getAdminProducts();
+  const search = (document.getElementById('orderSearch')?.value || '').trim().toLowerCase();
+
+  let filtered = [...orders];
+  if (currentOrderFilter) filtered = filtered.filter(o => o.status === currentOrderFilter);
+  if (search) filtered = filtered.filter(o => o.id.toLowerCase().includes(search) || (o.address?.name || '').toLowerCase().includes(search));
+
+  // 统计
+  document.getElementById('orderAll').textContent = orders.length;
+  document.getElementById('orderPending').textContent = orders.filter(o => o.status === '待支付').length;
+  document.getElementById('orderShipped').textContent = orders.filter(o => o.status === '已发货').length;
+  document.getElementById('orderDone').textContent = orders.filter(o => o.status === '已完成').length;
+
+  const tbody = document.getElementById('orderTableBody');
+  const empty = document.getElementById('orderEmpty');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = filtered.reverse().map(o => {
+    let amount = 0;
+    o.items.forEach(item => {
+      const p = prods.find(pr => pr.id === item.id);
+      if (p) amount += p.price * item.qty;
+    });
+    const statusClass = o.status === '已完成' ? 'status-success' : o.status === '已发货' ? 'status-info' : o.status === '已取消' ? 'status-danger' : 'status-warning';
+    const payNames = { wechat: '微信', alipay: '支付宝', cod: '货到付款' };
+    return `<tr>
+      <td><strong>${o.id}</strong></td>
+      <td>${o.address?.name || '-'}</td>
+      <td style="font-size:.85rem">${o.address?.phone || '-'}<br>${o.address?.region || ''}</td>
+      <td>${o.items.length} 件</td>
+      <td><strong>¥${amount.toFixed(2)}</strong></td>
+      <td>${payNames[o.payment] || o.payment || '-'}</td>
+      <td><span class="status ${statusClass}">${o.status}</span></td>
+      <td style="font-size:.85rem;color:#8c8c8c">${o.time}</td>
+      <td>
+        <button class="admin-btn-icon" title="详情" onclick="viewOrder('${o.id}')">&#x1F4CB;</button>
+        ${o.status === '待支付' ? `<button class="admin-btn admin-btn-sm admin-btn-primary" onclick="shipOrder('${o.id}')">发货</button>` : ''}
+        ${o.status === '已发货' ? `<button class="admin-btn admin-btn-sm admin-btn-outline" onclick="completeOrder('${o.id}')">完成</button>` : ''}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function viewOrder(id) {
+  const orders = getOrders();
+  const prods = getAdminProducts();
+  const o = orders.find(or => or.id === id);
+  if (!o) return;
+
+  let amount = 0;
+  const itemsHtml = o.items.map(item => {
+    const p = prods.find(pr => pr.id === item.id);
+    const lineTotal = p ? p.price * item.qty : 0;
+    amount += lineTotal;
+    return `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f0f0f0">
+      <span>${p ? p.icon + ' ' + p.name : '未知商品'} x${item.qty}</span>
+      <span>¥${lineTotal.toFixed(2)}</span>
+    </div>`;
+  }).join('');
+
+  const payNames = { wechat: '微信支付', alipay: '支付宝', cod: '货到付款' };
+
+  document.getElementById('orderDetailBody').innerHTML = `
+    <div style="margin-bottom:20px">
+      <h4 style="margin-bottom:12px;color:var(--admin-text-light)">订单信息</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.9rem">
+        <div>订单号：<strong>${o.id}</strong></div>
+        <div>状态：<strong>${o.status}</strong></div>
+        <div>下单时间：${o.time}</div>
+        <div>支付方式：${payNames[o.payment] || o.payment}</div>
+      </div>
+    </div>
+    <div style="margin-bottom:20px">
+      <h4 style="margin-bottom:12px;color:var(--admin-text-light)">收货信息</h4>
+      <div style="font-size:.9rem;line-height:1.8">
+        <div>收货人：${o.address?.name || '-'}</div>
+        <div>电话：${o.address?.phone || '-'}</div>
+        <div>地址：${o.address?.region || ''} ${o.address?.address || '-'}</div>
+        ${o.address?.note ? `<div>备注：${o.address.note}</div>` : ''}
+      </div>
+    </div>
+    <div>
+      <h4 style="margin-bottom:12px;color:var(--admin-text-light)">商品明细</h4>
+      ${itemsHtml}
+      <div style="display:flex;justify-content:space-between;padding:12px 0;font-weight:700;font-size:1.1rem;color:#e63946">
+        <span>合计</span><span>¥${amount.toFixed(2)}</span>
+      </div>
+    </div>`;
+
+  document.getElementById('orderDetailModal').classList.add('show');
+}
+
+function closeOrderDetail() {
+  document.getElementById('orderDetailModal').classList.remove('show');
+}
+
+function shipOrder(id) {
+  const orders = getOrders();
+  const o = orders.find(or => or.id === id);
+  if (o) { o.status = '已发货'; saveOrders(orders); renderOrderTable(); renderDashboard(); adminToast('已标记为发货'); }
+}
+
+function completeOrder(id) {
+  const orders = getOrders();
+  const o = orders.find(or => or.id === id);
+  if (o) { o.status = '已完成'; saveOrders(orders); renderOrderTable(); renderDashboard(); adminToast('订单已完成'); }
+}
+
+// ==================== 用户管理 ====================
+function renderUserTable() {
+  const users = getUsers();
+  const orders = getOrders();
+  const prods = getAdminProducts();
+  const search = (document.getElementById('userSearch')?.value || '').trim().toLowerCase();
+
+  const filtered = search ? users.filter(u => u.name.toLowerCase().includes(search) || u.phone.includes(search)) : users;
+
+  document.getElementById('userTotal').textContent = filtered.length;
+  const tbody = document.getElementById('userTableBody');
+  const empty = document.getElementById('userEmpty');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = filtered.map((u, i) => {
+    // 计算用户消费
+    const userOrders = orders.filter(o => o.address?.phone === u.phone || o.address?.name === u.name);
+    let totalSpent = 0;
+    userOrders.forEach(o => {
+      o.items.forEach(item => {
+        const p = prods.find(pr => pr.id === item.id);
+        if (p) totalSpent += p.price * item.qty;
+      });
+    });
+
+    return `<tr>
+      <td>${i + 1}</td>
+      <td><strong>${u.name}</strong></td>
+      <td>${u.phone}</td>
+      <td>${u.email || '-'}</td>
+      <td>${userOrders.length}</td>
+      <td>¥${totalSpent.toFixed(2)}</td>
+      <td>
+        <button class="admin-btn-icon" title="查看详情" onclick="adminToast('用户详情功能开发中')">&#x1F4CB;</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ==================== 初始化 ====================
+renderDashboard();
+</script>
+</body>
+</html>
