@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>全部商品 - 乐居生活</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .products-page { display: grid; grid-template-columns: 240px 1fr; gap: 32px; padding: 40px 0; }
+    .filter-sidebar { background: var(--bg-light); border-radius: var(--radius); padding: 24px; height: fit-content; position: sticky; top: 100px; }
+    .filter-sidebar h3 { font-size: 1.1rem; margin-bottom: 16px; color: var(--primary-dark); }
+    .filter-group { margin-bottom: 24px; }
+    .filter-group h4 { font-size: .95rem; margin-bottom: 12px; color: var(--text); }
+    .filter-group label { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer; font-size: .9rem; }
+    .filter-group input { accent-color: var(--primary); }
+    .sort-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .sort-bar select { padding: 8px 14px; border: 1px solid var(--border); border-radius: var(--radius); }
+    .result-count { color: var(--text-light); font-size: .9rem; }
+    @media (max-width: 768px) { .products-page { grid-template-columns: 1fr; } .filter-sidebar { display: none; } }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-top">
+    <div class="logo"><a href="store.html">乐居<span>生活</span></a></div>
+    <div class="header-search">
+      <input type="text" id="searchInput" placeholder="搜索商品...">
+      <button onclick="handleSearch()">搜索</button>
+    </div>
+    <div class="header-actions">
+      <a href="login.html" id="userLink">&#x1F464; 登录</a>
+      <a href="cart.html">&#x1F6D2; 购物车 <span class="cart-count" id="cartCount">0</span></a>
+    </div>
+  </div>
+  <nav class="main-nav">
+    <div class="container">
+      <ul>
+        <li><a href="store.html">首页</a></li>
+        <li><a href="products.html" class="active">全部商品</a></li>
+        <li><a href="products.html?cat=kitchen">厨房用品</a></li>
+        <li><a href="products.html?cat=bedroom">卧室家纺</a></li>
+        <li><a href="products.html?cat=bathroom">卫浴用品</a></li>
+        <li><a href="products.html?cat=decor">装饰摆件</a></li>
+        <li><a href="products.html?cat=storage">收纳整理</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<div class="container">
+  <div class="products-page">
+    <aside class="filter-sidebar">
+      <h3>筛选条件</h3>
+      <div class="filter-group">
+        <h4>商品分类</h4>
+        <label><input type="radio" name="cat" value="" checked onchange="filterProducts()"> 全部</label>
+        <label><input type="radio" name="cat" value="kitchen" onchange="filterProducts()"> 厨房用品</label>
+        <label><input type="radio" name="cat" value="bedroom" onchange="filterProducts()"> 卧室家纺</label>
+        <label><input type="radio" name="cat" value="bathroom" onchange="filterProducts()"> 卫浴用品</label>
+        <label><input type="radio" name="cat" value="decor" onchange="filterProducts()"> 装饰摆件</label>
+        <label><input type="radio" name="cat" value="storage" onchange="filterProducts()"> 收纳整理</label>
+        <label><input type="radio" name="cat" value="lighting" onchange="filterProducts()"> 灯具照明</label>
+      </div>
+      <div class="filter-group">
+        <h4>价格范围</h4>
+        <label><input type="radio" name="price" value="" checked onchange="filterProducts()"> 全部</label>
+        <label><input type="radio" name="price" value="0-50" onchange="filterProducts()"> ¥50以下</label>
+        <label><input type="radio" name="price" value="50-100" onchange="filterProducts()"> ¥50-100</label>
+        <label><input type="radio" name="price" value="100-200" onchange="filterProducts()"> ¥100-200</label>
+        <label><input type="radio" name="price" value="200-999" onchange="filterProducts()"> ¥200以上</label>
+      </div>
+    </aside>
+
+    <main>
+      <div class="sort-bar">
+        <span class="result-count" id="resultCount"></span>
+        <select id="sortSelect" onchange="filterProducts()">
+          <option value="default">默认排序</option>
+          <option value="price-asc">价格从低到高</option>
+          <option value="price-desc">价格从高到低</option>
+          <option value="name">按名称排序</option>
+        </select>
+      </div>
+      <div class="products-grid" id="productList"></div>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom">&copy; 2026 乐居生活百货 版权所有</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+<script src="js/app.js"></script>
+<script>
+  // 读取 URL 参数预选分类
+  const params = new URLSearchParams(location.search);
+  const catParam = params.get('cat');
+  if (catParam) {
+    const radio = document.querySelector(`input[name="cat"][value="${catParam}"]`);
+    if (radio) radio.checked = true;
+  }
+
+  function filterProducts() {
+    const cat = document.querySelector('input[name="cat"]:checked').value;
+    const priceRange = document.querySelector('input[name="price"]:checked').value;
+    const sort = document.getElementById('sortSelect').value;
+
+    let filtered = [...products];
+    if (cat) filtered = filtered.filter(p => p.category === cat);
+    if (priceRange) {
+      const [min, max] = priceRange.split('-').map(Number);
+      filtered = filtered.filter(p => p.price >= min && p.price <= max);
+    }
+
+    if (sort === 'price-asc') filtered.sort((a, b) => a.price - b.price);
+    else if (sort === 'price-desc') filtered.sort((a, b) => b.price - a.price);
+    else if (sort === 'name') filtered.sort((a, b) => a.name.localeCompare(b.name, 'zh'));
+
+    document.getElementById('resultCount').textContent = `共 ${filtered.length} 件商品`;
+    renderProducts('productList', filtered);
+  }
+
+  filterProducts();
+  updateCartCount();
+  updateUserLink();
+</script>
+</body>
+</html>

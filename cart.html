@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>购物车 - 乐居生活</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-top">
+    <div class="logo"><a href="store.html">乐居<span>生活</span></a></div>
+    <div class="header-search">
+      <input type="text" id="searchInput" placeholder="搜索商品...">
+      <button onclick="handleSearch()">搜索</button>
+    </div>
+    <div class="header-actions">
+      <a href="login.html" id="userLink">&#x1F464; 登录</a>
+      <a href="cart.html">&#x1F6D2; 购物车 <span class="cart-count" id="cartCount">0</span></a>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <h2 class="section-title" style="padding-top:32px">我的购物车</h2>
+  <div class="cart-page" id="cartPage">
+    <!-- 由 JS 渲染 -->
+  </div>
+</div>
+
+<footer class="site-footer" style="margin-top:60px">
+  <div class="container">
+    <div class="footer-bottom">&copy; 2026 乐居生活百货 版权所有</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+<script src="js/app.js"></script>
+<script>
+  function renderCart() {
+    const cart = getCart();
+    const page = document.getElementById('cartPage');
+
+    if (cart.length === 0) {
+      page.innerHTML = `
+        <div class="cart-empty" style="grid-column:1/-1">
+          <div class="icon">&#x1F6D2;</div>
+          <h3>购物车是空的</h3>
+          <p style="margin:12px 0 24px">快去挑选喜欢的商品吧</p>
+          <a href="products.html" class="btn btn-primary">去购物</a>
+        </div>`;
+      return;
+    }
+
+    let subtotal = 0;
+    let itemsHtml = '';
+    cart.forEach(item => {
+      const p = products.find(pr => pr.id === item.id);
+      if (!p) return;
+      const lineTotal = p.price * item.qty;
+      subtotal += lineTotal;
+      itemsHtml += `
+        <div class="cart-item">
+          <div class="cart-item-image">${p.icon}</div>
+          <div class="cart-item-info">
+            <h3><a href="product-detail.html?id=${p.id}">${p.name}</a></h3>
+            <p class="spec">${getCategoryName(p.category)}</p>
+            <div class="quantity-selector" style="margin:0">
+              <button onclick="updateQty(${p.id}, -1)">-</button>
+              <input type="number" value="${item.qty}" min="1" max="${p.stock}" onchange="setQty(${p.id}, this.value)" style="width:48px">
+              <button onclick="updateQty(${p.id}, 1)">+</button>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <div class="cart-item-price">&yen;${lineTotal.toFixed(2)}</div>
+            <button class="cart-item-remove" onclick="removeFromCart(${p.id})">删除</button>
+          </div>
+        </div>`;
+    });
+
+    const shipping = subtotal >= 99 ? 0 : 10;
+    const total = subtotal + shipping;
+
+    page.innerHTML = `
+      <div class="cart-items">${itemsHtml}</div>
+      <div class="cart-summary">
+        <h2>订单摘要</h2>
+        <div class="summary-row"><span>商品小计</span><span>&yen;${subtotal.toFixed(2)}</span></div>
+        <div class="summary-row"><span>运费</span><span>${shipping === 0 ? '免运费' : '&yen;' + shipping.toFixed(2)}</span></div>
+        ${subtotal < 99 ? '<div class="summary-row" style="font-size:.85rem;color:var(--accent)">再购 &yen;' + (99 - subtotal).toFixed(2) + ' 即可免运费</div>' : ''}
+        <div class="summary-row total"><span>合计</span><span>&yen;${total.toFixed(2)}</span></div>
+        <a href="checkout.html" class="btn btn-primary btn-block" style="margin-top:20px">去结算</a>
+        <a href="products.html" class="btn btn-outline btn-block" style="margin-top:10px;border-color:var(--primary);color:var(--primary)">继续购物</a>
+      </div>`;
+  }
+
+  function updateQty(id, delta) {
+    const cart = getCart();
+    const item = cart.find(i => i.id === id);
+    if (item) {
+      item.qty += delta;
+      if (item.qty < 1) item.qty = 1;
+      const p = products.find(pr => pr.id === id);
+      if (p && item.qty > p.stock) item.qty = p.stock;
+      saveCart(cart);
+      renderCart();
+      updateCartCount();
+    }
+  }
+
+  function setQty(id, val) {
+    const cart = getCart();
+    const item = cart.find(i => i.id === id);
+    if (item) {
+      let q = parseInt(val);
+      if (isNaN(q) || q < 1) q = 1;
+      const p = products.find(pr => pr.id === id);
+      if (p && q > p.stock) q = p.stock;
+      item.qty = q;
+      saveCart(cart);
+      renderCart();
+      updateCartCount();
+    }
+  }
+
+  function removeFromCart(id) {
+    let cart = getCart().filter(i => i.id !== id);
+    saveCart(cart);
+    renderCart();
+    updateCartCount();
+    showToast('已从购物车移除');
+  }
+
+  renderCart();
+  updateCartCount();
+  updateUserLink();
+</script>
+</body>
+</html>

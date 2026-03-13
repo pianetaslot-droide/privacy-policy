@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>结算 - 乐居生活</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-top">
+    <div class="logo"><a href="store.html">乐居<span>生活</span></a></div>
+    <div class="header-actions">
+      <a href="login.html" id="userLink">&#x1F464; 登录</a>
+      <a href="cart.html">&#x1F6D2; 购物车 <span class="cart-count" id="cartCount">0</span></a>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="checkout-page">
+    <div>
+      <!-- 收货信息 -->
+      <div class="form-section">
+        <h2>收货信息</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label>收货人</label>
+            <input type="text" id="name" placeholder="请输入收货人姓名" required>
+          </div>
+          <div class="form-group">
+            <label>联系电话</label>
+            <input type="tel" id="phone" placeholder="请输入手机号码" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>省份/城市</label>
+            <select id="region">
+              <option value="">请选择</option>
+              <option>北京市</option>
+              <option>上海市</option>
+              <option>广州市</option>
+              <option>深圳市</option>
+              <option>杭州市</option>
+              <option>成都市</option>
+              <option>武汉市</option>
+              <option>南京市</option>
+              <option>其他城市</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>邮政编码</label>
+            <input type="text" id="zipcode" placeholder="请输入邮编">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>详细地址</label>
+          <textarea id="address" rows="2" placeholder="请输入详细地址（街道、门牌号等）"></textarea>
+        </div>
+        <div class="form-group">
+          <label>备注</label>
+          <textarea id="note" rows="2" placeholder="如有特殊要求请备注"></textarea>
+        </div>
+      </div>
+
+      <!-- 支付方式 -->
+      <div class="form-section">
+        <h2>支付方式</h2>
+        <div class="payment-methods">
+          <label class="payment-option selected" onclick="selectPayment(this)">
+            <input type="radio" name="payment" value="wechat" checked>
+            <span style="font-size:1.3rem">&#x1F4F1;</span>
+            <div>
+              <strong>微信支付</strong><br>
+              <small style="color:var(--text-light)">使用微信扫码支付</small>
+            </div>
+          </label>
+          <label class="payment-option" onclick="selectPayment(this)">
+            <input type="radio" name="payment" value="alipay">
+            <span style="font-size:1.3rem">&#x1F4B3;</span>
+            <div>
+              <strong>支付宝</strong><br>
+              <small style="color:var(--text-light)">使用支付宝扫码支付</small>
+            </div>
+          </label>
+          <label class="payment-option" onclick="selectPayment(this)">
+            <input type="radio" name="payment" value="cod">
+            <span style="font-size:1.3rem">&#x1F4E6;</span>
+            <div>
+              <strong>货到付款</strong><br>
+              <small style="color:var(--text-light)">送货上门时支付现金</small>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 订单摘要 -->
+    <div>
+      <div class="cart-summary" id="orderSummary">
+        <!-- 由 JS 渲染 -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer" style="margin-top:60px">
+  <div class="container">
+    <div class="footer-bottom">&copy; 2026 乐居生活百货 版权所有</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+<script src="js/app.js"></script>
+<script>
+  function selectPayment(el) {
+    document.querySelectorAll('.payment-option').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+    el.querySelector('input').checked = true;
+  }
+
+  function renderOrderSummary() {
+    const cart = getCart();
+    if (cart.length === 0) {
+      location.href = 'cart.html';
+      return;
+    }
+
+    let subtotal = 0;
+    let itemsHtml = '';
+    cart.forEach(item => {
+      const p = products.find(pr => pr.id === item.id);
+      if (!p) return;
+      const lineTotal = p.price * item.qty;
+      subtotal += lineTotal;
+      itemsHtml += `
+        <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:.9rem">
+          <span>${p.name} x${item.qty}</span>
+          <span>&yen;${lineTotal.toFixed(2)}</span>
+        </div>`;
+    });
+
+    const shipping = subtotal >= 99 ? 0 : 10;
+    const total = subtotal + shipping;
+
+    document.getElementById('orderSummary').innerHTML = `
+      <h2>订单摘要</h2>
+      ${itemsHtml}
+      <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:12px">
+        <div class="summary-row"><span>商品小计</span><span>&yen;${subtotal.toFixed(2)}</span></div>
+        <div class="summary-row"><span>运费</span><span>${shipping === 0 ? '免运费' : '&yen;' + shipping.toFixed(2)}</span></div>
+        <div class="summary-row total"><span>应付总额</span><span>&yen;${total.toFixed(2)}</span></div>
+      </div>
+      <button class="btn btn-primary btn-block" style="margin-top:20px" onclick="submitOrder()">提交订单</button>
+      <a href="cart.html" style="display:block;text-align:center;margin-top:12px;font-size:.9rem;color:var(--primary)">返回购物车</a>`;
+  }
+
+  function submitOrder() {
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const region = document.getElementById('region').value;
+    const address = document.getElementById('address').value.trim();
+
+    if (!name) { showToast('请输入收货人姓名'); return; }
+    if (!phone || !/^1\d{10}$/.test(phone)) { showToast('请输入正确的手机号码'); return; }
+    if (!region) { showToast('请选择省份/城市'); return; }
+    if (!address) { showToast('请输入详细地址'); return; }
+
+    const user = getUser();
+    if (!user) { showToast('请先登录后再下单'); setTimeout(() => location.href = 'login.html', 1500); return; }
+
+    // 保存订单
+    const order = {
+      id: 'ORD' + Date.now(),
+      items: getCart(),
+      address: { name, phone, region, address, note: document.getElementById('note').value },
+      payment: document.querySelector('input[name="payment"]:checked').value,
+      time: new Date().toLocaleString('zh-CN'),
+      status: '待支付'
+    };
+    const orders = JSON.parse(localStorage.getItem('leju_orders') || '[]');
+    orders.push(order);
+    localStorage.setItem('leju_orders', JSON.stringify(orders));
+
+    // 清空购物车
+    saveCart([]);
+    updateCartCount();
+
+    // 跳转成功页
+    document.querySelector('.checkout-page').innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:80px 20px">
+        <div style="font-size:4rem;margin-bottom:16px">&#x2705;</div>
+        <h2 style="margin-bottom:12px">订单提交成功！</h2>
+        <p style="color:var(--text-light);margin-bottom:8px">订单号：${order.id}</p>
+        <p style="color:var(--text-light);margin-bottom:32px">我们会尽快为您安排发货</p>
+        <a href="store.html" class="btn btn-primary">返回首页</a>
+        <a href="products.html" class="btn btn-outline" style="margin-left:12px;border-color:var(--primary);color:var(--primary)">继续购物</a>
+      </div>`;
+  }
+
+  renderOrderSummary();
+  updateCartCount();
+  updateUserLink();
+</script>
+</body>
+</html>
