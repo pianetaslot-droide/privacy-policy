@@ -8,258 +8,1056 @@
 </head>
 <body>
 
+<!-- 移动端侧边栏遮罩 -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
 <div class="admin-layout">
-  <!-- 侧边栏 -->
-  <aside class="admin-sidebar">
-    <div class="sidebar-logo">&#x1F3E0; 乐居<span>后台</span></div>
+  <!-- ==================== 侧边栏 ==================== -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-store" onclick="adminToast('店铺设置开发中')">
+      <div class="store-avatar">乐</div>
+      <div class="store-info">
+        <div class="store-name">乐居生活</div>
+        <div class="store-plan">专业版</div>
+      </div>
+    </div>
+
     <nav class="sidebar-nav">
-      <div class="nav-group-title">概览</div>
-      <div class="nav-item active" onclick="showPage('dashboard')">
-        <span class="icon">&#x1F4CA;</span> <span>数据看板</span>
+      <div class="nav-section">
+        <div class="nav-item active" onclick="showPage('dashboard', this)">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-label">主页</span>
+        </div>
       </div>
 
-      <div class="nav-group-title">业务管理</div>
-      <div class="nav-item" onclick="showPage('products')">
-        <span class="icon">&#x1F4E6;</span> <span>商品管理</span>
-      </div>
-      <div class="nav-item" onclick="showPage('orders')">
-        <span class="icon">&#x1F4CB;</span> <span>订单管理</span>
-        <span class="badge" id="orderBadge">0</span>
-      </div>
-      <div class="nav-item" onclick="showPage('users')">
-        <span class="icon">&#x1F465;</span> <span>用户管理</span>
+      <div class="nav-section">
+        <div class="nav-section-title">销售渠道</div>
+        <div class="nav-item" onclick="showPage('orders', this)">
+          <span class="nav-icon">📋</span>
+          <span class="nav-label">订单管理</span>
+          <span class="nav-badge" id="orderBadge" style="display:none">0</span>
+        </div>
+        <div class="nav-item" onclick="showPage('drafts', this)">
+          <span class="nav-icon">📝</span>
+          <span class="nav-label">草稿订单</span>
+        </div>
       </div>
 
-      <div class="nav-group-title">系统</div>
-      <div class="nav-item" onclick="location.href='store.html'">
-        <span class="icon">&#x1F310;</span> <span>访问前台</span>
+      <div class="nav-section">
+        <div class="nav-section-title">产品</div>
+        <div class="nav-item" onclick="showPage('products', this)">
+          <span class="nav-icon">📦</span>
+          <span class="nav-label">商品管理</span>
+        </div>
+        <div class="nav-item" onclick="showPage('inventory', this)">
+          <span class="nav-icon">🏷️</span>
+          <span class="nav-label">库存管理</span>
+        </div>
+        <div class="nav-item" onclick="showPage('collections', this)">
+          <span class="nav-icon">📁</span>
+          <span class="nav-label">商品系列</span>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">客户</div>
+        <div class="nav-item" onclick="showPage('customers', this)">
+          <span class="nav-icon">👥</span>
+          <span class="nav-label">客户管理</span>
+        </div>
+        <div class="nav-item" onclick="showPage('segments', this)">
+          <span class="nav-icon">🎯</span>
+          <span class="nav-label">客户细分</span>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">分析</div>
+        <div class="nav-item" onclick="showPage('analytics', this)">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">数据分析</span>
+        </div>
+        <div class="nav-item" onclick="showPage('reports', this)">
+          <span class="nav-icon">📈</span>
+          <span class="nav-label">报告</span>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">营销</div>
+        <div class="nav-item" onclick="showPage('marketing', this)">
+          <span class="nav-icon">📣</span>
+          <span class="nav-label">营销活动</span>
+        </div>
+        <div class="nav-item" onclick="showPage('discounts', this)">
+          <span class="nav-icon">🎟️</span>
+          <span class="nav-label">折扣管理</span>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">在线商店</div>
+        <div class="nav-item" onclick="showPage('themes', this)">
+          <span class="nav-icon">🎨</span>
+          <span class="nav-label">模板主题</span>
+        </div>
+        <div class="nav-item" onclick="showPage('pages', this)">
+          <span class="nav-icon">📄</span>
+          <span class="nav-label">页面管理</span>
+        </div>
+        <div class="nav-item" onclick="showPage('navigation', this)">
+          <span class="nav-icon">🧭</span>
+          <span class="nav-label">导航菜单</span>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">应用</div>
+        <div class="nav-item" onclick="showPage('apps', this)">
+          <span class="nav-icon">🧩</span>
+          <span class="nav-label">应用市场</span>
+        </div>
       </div>
     </nav>
+
+    <div class="sidebar-bottom">
+      <div class="nav-item" onclick="showPage('settings', this)">
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-label">设置</span>
+      </div>
+      <div class="nav-item" onclick="location.href='store.html'">
+        <span class="nav-icon">🌐</span>
+        <span class="nav-label">查看在线商店</span>
+      </div>
+    </div>
   </aside>
 
-  <!-- 主内容 -->
+  <!-- ==================== 主内容 ==================== -->
   <div class="admin-main">
-    <header class="admin-header">
-      <h2 id="pageTitle">数据看板</h2>
-      <div class="header-right">
-        <a href="store.html">&#x1F310; 前台首页</a>
-        <div class="admin-avatar">&#x1F464; 管理员</div>
+    <!-- 顶部栏 -->
+    <header class="admin-topbar">
+      <button class="topbar-toggle" onclick="toggleSidebar()">☰</button>
+      <div class="topbar-search">
+        <input type="text" placeholder="搜索商品、订单、客户..." id="globalSearch" onkeyup="handleGlobalSearch(event)">
+      </div>
+      <div class="topbar-right">
+        <button class="topbar-btn" title="通知" onclick="adminToast('暂无新通知')">
+          🔔
+          <span class="dot" id="notifDot" style="display:none"></span>
+        </button>
+        <button class="topbar-btn" title="访问商店" onclick="location.href='store.html'">👁️</button>
+        <div class="topbar-user" onclick="adminToast('账户设置开发中')">
+          <div class="topbar-user-avatar">管</div>
+          <span class="topbar-user-name">管理员</span>
+        </div>
       </div>
     </header>
 
     <div class="admin-content">
       <!-- ==================== 数据看板 ==================== -->
       <div id="page-dashboard">
-        <!-- 统计卡片 -->
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-info">
-              <h3>今日销售额</h3>
-              <div class="number" id="statSales">¥0</div>
-              <div class="trend trend-up" id="statSalesTrend"></div>
-            </div>
-            <div class="stat-icon blue">&#x1F4B0;</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-info">
-              <h3>今日订单</h3>
-              <div class="number" id="statOrders">0</div>
-              <div class="trend trend-up" id="statOrdersTrend"></div>
-            </div>
-            <div class="stat-icon green">&#x1F4E6;</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-info">
-              <h3>注册用户</h3>
-              <div class="number" id="statUsers">0</div>
-              <div class="trend trend-up" id="statUsersTrend"></div>
-            </div>
-            <div class="stat-icon orange">&#x1F465;</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-info">
-              <h3>在售商品</h3>
-              <div class="number" id="statProducts">0</div>
-              <div class="trend" id="statProductsTrend"></div>
-            </div>
-            <div class="stat-icon purple">&#x1F6CD;&#xFE0F;</div>
+        <div class="page-header">
+          <div>
+            <h1>主页</h1>
+            <p class="text-muted text-sm" id="dashboardDate"></p>
           </div>
         </div>
 
-        <!-- 图表 -->
-        <div class="charts-grid">
-          <div class="chart-card">
-            <h3>
-              近7日销售趋势
-              <select onchange="updateSalesChart(this.value)">
-                <option value="7">近7天</option>
-                <option value="30">近30天</option>
-              </select>
-            </h3>
-            <div class="bar-chart" id="salesChart"></div>
+        <!-- 统计卡片 -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-label">总销售额</div>
+            <div class="stat-value" id="statSales">¥0.00</div>
+            <div class="stat-change up" id="statSalesChange">↑ 与昨日持平</div>
           </div>
-          <div class="chart-card">
-            <h3>品类销售占比</h3>
-            <div class="pie-chart" id="categoryChart"></div>
+          <div class="stat-card">
+            <div class="stat-label">总订单数</div>
+            <div class="stat-value" id="statOrders">0</div>
+            <div class="stat-change up" id="statOrdersChange"></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">在线商品</div>
+            <div class="stat-value" id="statProducts">0</div>
+            <div class="stat-change" id="statProductsChange"></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">注册客户</div>
+            <div class="stat-value" id="statUsers">0</div>
+            <div class="stat-change up" id="statUsersChange"></div>
+          </div>
+        </div>
+
+        <!-- 图表区 -->
+        <div class="sb-grid-2-1">
+          <div class="sb-card">
+            <div class="sb-card-header">
+              <div>
+                <h2>销售趋势</h2>
+                <span class="text-muted text-sm">最近7天销售数据</span>
+              </div>
+              <div>
+                <select class="sb-select" style="width:auto;padding:4px 8px;font-size:.8rem" onchange="updateSalesChart(this.value)">
+                  <option value="7">近7天</option>
+                  <option value="30">近30天</option>
+                </select>
+              </div>
+            </div>
+            <div class="sb-card-body">
+              <div class="bar-chart" id="salesChart"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="sb-card">
+              <div class="sb-card-header">
+                <h2>品类销售占比</h2>
+              </div>
+              <div class="sb-card-body">
+                <div class="pie-list" id="categoryChart"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 快捷操作 + 最近活动 -->
+        <div class="sb-grid-2">
+          <div class="sb-card">
+            <div class="sb-card-header"><h2>快捷操作</h2></div>
+            <div class="sb-card-body">
+              <div class="quick-actions">
+                <div class="quick-action-card" onclick="showPage('products', document.querySelector('[onclick*=products]'))">
+                  <span class="qa-icon">➕</span>
+                  <span class="qa-label">添加商品</span>
+                </div>
+                <div class="quick-action-card" onclick="showPage('orders', document.querySelector('[onclick*=orders]'))">
+                  <span class="qa-icon">📦</span>
+                  <span class="qa-label">处理订单</span>
+                </div>
+                <div class="quick-action-card" onclick="showPage('discounts', document.querySelector('[onclick*=discounts]'))">
+                  <span class="qa-icon">🎟️</span>
+                  <span class="qa-label">创建折扣</span>
+                </div>
+                <div class="quick-action-card" onclick="showPage('analytics', document.querySelector('[onclick*=analytics]'))">
+                  <span class="qa-icon">📊</span>
+                  <span class="qa-label">查看报告</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sb-card">
+            <div class="sb-card-header"><h2>最近活动</h2></div>
+            <div class="sb-card-body">
+              <div class="sb-timeline" id="recentActivity"></div>
+            </div>
           </div>
         </div>
 
         <!-- 最新订单 -->
-        <div class="table-card">
-          <div class="table-header">
-            <h3>最新订单</h3>
-            <button class="admin-btn admin-btn-outline admin-btn-sm" onclick="showPage('orders')">查看全部</button>
+        <div class="sb-card">
+          <div class="sb-card-header">
+            <h2>最新订单</h2>
+            <button class="sb-btn sb-btn-plain" onclick="showPage('orders', document.querySelector('[onclick*=orders]'))">查看全部</button>
           </div>
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>订单号</th>
-                <th>客户</th>
-                <th>商品数</th>
-                <th>金额</th>
-                <th>状态</th>
-                <th>时间</th>
-              </tr>
-            </thead>
-            <tbody id="recentOrders"></tbody>
-          </table>
+          <div class="sb-card-body no-pad">
+            <div class="sb-table-responsive">
+              <table class="sb-table">
+                <thead>
+                  <tr>
+                    <th>订单号</th>
+                    <th>客户</th>
+                    <th>商品</th>
+                    <th>金额</th>
+                    <th>支付状态</th>
+                    <th>发货状态</th>
+                    <th>时间</th>
+                  </tr>
+                </thead>
+                <tbody id="dashRecentOrders"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 低库存提醒 -->
+        <div class="sb-card" id="lowStockCard" style="display:none">
+          <div class="sb-card-header">
+            <h2>⚠️ 低库存商品</h2>
+            <button class="sb-btn sb-btn-plain" onclick="showPage('inventory', document.querySelector('[onclick*=inventory]'))">管理库存</button>
+          </div>
+          <div class="sb-card-body no-pad">
+            <table class="sb-table">
+              <thead><tr><th>商品</th><th>当前库存</th><th>操作</th></tr></thead>
+              <tbody id="lowStockBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- ==================== 订单管理 ==================== -->
+      <div id="page-orders" style="display:none">
+        <div class="page-header">
+          <h1>订单管理</h1>
+          <div class="page-header-actions">
+            <button class="sb-btn sb-btn-secondary" onclick="exportOrders()">导出</button>
+            <button class="sb-btn sb-btn-primary" onclick="adminToast('手动创建订单功能开发中')">创建订单</button>
+          </div>
+        </div>
+
+        <!-- 订单状态标签页 -->
+        <div class="sb-card">
+          <div class="sb-tabs" id="orderTabs">
+            <button class="sb-tab active" onclick="filterOrderTab('all', this)">全部</button>
+            <button class="sb-tab" onclick="filterOrderTab('待支付', this)">待支付</button>
+            <button class="sb-tab" onclick="filterOrderTab('已支付', this)">已支付</button>
+            <button class="sb-tab" onclick="filterOrderTab('已发货', this)">已发货</button>
+            <button class="sb-tab" onclick="filterOrderTab('已完成', this)">已完成</button>
+            <button class="sb-tab" onclick="filterOrderTab('已取消', this)">已取消</button>
+          </div>
+
+          <div class="sb-filters">
+            <div class="sb-filter-search">
+              <input type="text" placeholder="搜索订单号、客户名称..." id="orderSearch" oninput="renderOrderTable()">
+            </div>
+            <button class="sb-filter-btn" onclick="adminToast('高级筛选开发中')">📅 日期范围</button>
+            <button class="sb-filter-btn" onclick="adminToast('排序功能开发中')">↕️ 排序</button>
+          </div>
+
+          <div class="sb-card-body no-pad">
+            <div class="sb-table-responsive">
+              <table class="sb-table">
+                <thead>
+                  <tr>
+                    <th class="checkbox-cell"><input type="checkbox" onclick="toggleAllOrders(this)"></th>
+                    <th>订单号</th>
+                    <th>日期</th>
+                    <th>客户</th>
+                    <th>商品</th>
+                    <th>合计</th>
+                    <th>支付状态</th>
+                    <th>发货状态</th>
+                    <th class="actions-cell">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="orderTableBody"></tbody>
+              </table>
+            </div>
+            <div class="sb-empty" id="orderEmpty" style="display:none">
+              <div class="sb-empty-icon">📋</div>
+              <div class="sb-empty-title">暂无订单</div>
+              <div class="sb-empty-desc">当客户在您的商店下单后，订单将显示在这里</div>
+            </div>
+          </div>
+
+          <div class="sb-card-footer" id="orderPagination" style="display:none">
+            <span class="text-sm text-muted" id="orderCountInfo"></span>
+            <div class="sb-pagination" id="orderPages"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 草稿订单 ==================== -->
+      <div id="page-drafts" style="display:none">
+        <div class="page-header">
+          <h1>草稿订单</h1>
+          <button class="sb-btn sb-btn-primary" onclick="adminToast('创建草稿订单功能开发中')">创建草稿订单</button>
+        </div>
+        <div class="sb-card">
+          <div class="sb-card-body">
+            <div class="sb-empty">
+              <div class="sb-empty-icon">📝</div>
+              <div class="sb-empty-title">暂无草稿订单</div>
+              <div class="sb-empty-desc">草稿订单适合电话下单或手动创建订单场景</div>
+              <button class="sb-btn sb-btn-primary" onclick="adminToast('创建草稿订单功能开发中')">创建草稿订单</button>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- ==================== 商品管理 ==================== -->
       <div id="page-products" style="display:none">
-        <div class="table-card">
-          <div class="table-header">
-            <h3>商品列表 (<span id="productTotal">0</span>)</h3>
-            <div class="table-actions">
-              <input type="text" class="table-search" placeholder="搜索商品名称..." id="productSearch" oninput="renderProductTable()">
-              <button class="admin-btn admin-btn-primary" onclick="openProductModal()">+ 新增商品</button>
-            </div>
-          </div>
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>商品</th>
-                <th>分类</th>
-                <th>价格</th>
-                <th>库存</th>
-                <th>状态</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody id="productTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ==================== 订单管理 ==================== -->
-      <div id="page-orders" style="display:none">
-        <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
-          <div class="stat-card" style="cursor:pointer" onclick="filterOrderStatus('')">
-            <div class="stat-info"><h3>全部订单</h3><div class="number" id="orderAll">0</div></div>
-          </div>
-          <div class="stat-card" style="cursor:pointer" onclick="filterOrderStatus('待支付')">
-            <div class="stat-info"><h3>待支付</h3><div class="number" id="orderPending">0</div></div>
-            <div class="stat-icon orange">&#x23F3;</div>
-          </div>
-          <div class="stat-card" style="cursor:pointer" onclick="filterOrderStatus('已发货')">
-            <div class="stat-info"><h3>已发货</h3><div class="number" id="orderShipped">0</div></div>
-            <div class="stat-icon blue">&#x1F69A;</div>
-          </div>
-          <div class="stat-card" style="cursor:pointer" onclick="filterOrderStatus('已完成')">
-            <div class="stat-info"><h3>已完成</h3><div class="number" id="orderDone">0</div></div>
-            <div class="stat-icon green">&#x2705;</div>
+        <div class="page-header">
+          <h1>商品管理</h1>
+          <div class="page-header-actions">
+            <button class="sb-btn sb-btn-secondary" onclick="adminToast('导入功能开发中')">导入</button>
+            <button class="sb-btn sb-btn-secondary" onclick="exportProducts()">导出</button>
+            <button class="sb-btn sb-btn-primary" onclick="openProductModal()">添加商品</button>
           </div>
         </div>
 
-        <div class="table-card">
-          <div class="table-header">
-            <h3>订单列表</h3>
-            <div class="table-actions">
-              <input type="text" class="table-search" placeholder="搜索订单号/客户..." id="orderSearch" oninput="renderOrderTable()">
+        <div class="sb-card">
+          <div class="sb-tabs" id="productTabs">
+            <button class="sb-tab active" onclick="filterProductTab('all', this)">全部</button>
+            <button class="sb-tab" onclick="filterProductTab('active', this)">已上架</button>
+            <button class="sb-tab" onclick="filterProductTab('draft', this)">草稿</button>
+            <button class="sb-tab" onclick="filterProductTab('archived', this)">已归档</button>
+          </div>
+
+          <div class="sb-filters">
+            <div class="sb-filter-search">
+              <input type="text" placeholder="搜索商品..." id="productSearch" oninput="renderProductTable()">
+            </div>
+            <select class="sb-select" style="width:auto;padding:6px 10px;font-size:.82rem" id="productCatFilter" onchange="renderProductTable()">
+              <option value="">全部分类</option>
+              <option value="kitchen">厨房用品</option>
+              <option value="bedroom">卧室家纺</option>
+              <option value="bathroom">卫浴用品</option>
+              <option value="decor">装饰摆件</option>
+              <option value="storage">收纳整理</option>
+              <option value="lighting">灯具照明</option>
+            </select>
+            <button class="sb-filter-btn" onclick="adminToast('更多筛选开发中')">更多筛选</button>
+          </div>
+
+          <div class="sb-card-body no-pad">
+            <div class="sb-table-responsive">
+              <table class="sb-table">
+                <thead>
+                  <tr>
+                    <th class="checkbox-cell"><input type="checkbox" onclick="toggleAllProducts(this)"></th>
+                    <th></th>
+                    <th>商品名称</th>
+                    <th>状态</th>
+                    <th>库存</th>
+                    <th>分类</th>
+                    <th>售价</th>
+                    <th class="actions-cell">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="productTableBody"></tbody>
+              </table>
             </div>
           </div>
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>订单号</th>
-                <th>客户</th>
-                <th>收货人</th>
-                <th>商品</th>
-                <th>金额</th>
-                <th>支付方式</th>
-                <th>状态</th>
-                <th>时间</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody id="orderTableBody"></tbody>
-          </table>
-          <div class="empty-state" id="orderEmpty" style="display:none">
-            <div class="icon">&#x1F4CB;</div>
-            <p>暂无订单数据</p>
+
+          <div class="sb-card-footer">
+            <span class="text-sm text-muted"><span id="productTotal">0</span> 件商品</span>
           </div>
         </div>
       </div>
 
-      <!-- ==================== 用户管理 ==================== -->
-      <div id="page-users" style="display:none">
-        <div class="table-card">
-          <div class="table-header">
-            <h3>用户列表 (<span id="userTotal">0</span>)</h3>
-            <div class="table-actions">
-              <input type="text" class="table-search" placeholder="搜索用户..." id="userSearch" oninput="renderUserTable()">
+      <!-- ==================== 库存管理 ==================== -->
+      <div id="page-inventory" style="display:none">
+        <div class="page-header">
+          <h1>库存管理</h1>
+          <button class="sb-btn sb-btn-secondary" onclick="adminToast('批量更新库存开发中')">批量更新</button>
+        </div>
+
+        <div class="sb-banner sb-banner-info">
+          💡 库存不足10件的商品将标记为低库存状态，建议及时补货
+        </div>
+
+        <div class="sb-card">
+          <div class="sb-filters">
+            <div class="sb-filter-search">
+              <input type="text" placeholder="搜索商品..." id="inventorySearch" oninput="renderInventoryTable()">
             </div>
+            <button class="sb-filter-btn" id="lowStockFilter" onclick="toggleLowStockFilter()">⚠️ 仅显示低库存</button>
           </div>
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>昵称</th>
-                <th>手机号</th>
-                <th>邮箱</th>
-                <th>订单数</th>
-                <th>消费总额</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody id="userTableBody"></tbody>
-          </table>
-          <div class="empty-state" id="userEmpty" style="display:none">
-            <div class="icon">&#x1F465;</div>
-            <p>暂无注册用户</p>
+          <div class="sb-card-body no-pad">
+            <div class="sb-table-responsive">
+              <table class="sb-table">
+                <thead>
+                  <tr>
+                    <th>商品</th>
+                    <th>SKU</th>
+                    <th>分类</th>
+                    <th>当前库存</th>
+                    <th>状态</th>
+                    <th class="actions-cell">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="inventoryTableBody"></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
 
+      <!-- ==================== 商品系列 ==================== -->
+      <div id="page-collections" style="display:none">
+        <div class="page-header">
+          <h1>商品系列</h1>
+          <button class="sb-btn sb-btn-primary" onclick="adminToast('创建商品系列功能开发中')">创建系列</button>
+        </div>
+        <div class="sb-card">
+          <div class="sb-card-body no-pad">
+            <table class="sb-table">
+              <thead><tr><th>系列名称</th><th>商品数量</th><th>状态</th><th class="actions-cell">操作</th></tr></thead>
+              <tbody id="collectionsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 客户管理 ==================== -->
+      <div id="page-customers" style="display:none">
+        <div class="page-header">
+          <h1>客户管理</h1>
+          <div class="page-header-actions">
+            <button class="sb-btn sb-btn-secondary" onclick="exportCustomers()">导出</button>
+            <button class="sb-btn sb-btn-primary" onclick="adminToast('添加客户功能开发中')">添加客户</button>
+          </div>
+        </div>
+
+        <div class="sb-card">
+          <div class="sb-filters">
+            <div class="sb-filter-search">
+              <input type="text" placeholder="搜索客户名称、手机号、邮箱..." id="customerSearch" oninput="renderCustomerTable()">
+            </div>
+          </div>
+          <div class="sb-card-body no-pad">
+            <div class="sb-table-responsive">
+              <table class="sb-table">
+                <thead>
+                  <tr>
+                    <th class="checkbox-cell"><input type="checkbox"></th>
+                    <th>客户</th>
+                    <th>手机号</th>
+                    <th>邮箱</th>
+                    <th>订单数</th>
+                    <th>消费金额</th>
+                    <th>注册时间</th>
+                    <th class="actions-cell">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="customerTableBody"></tbody>
+              </table>
+            </div>
+            <div class="sb-empty" id="customerEmpty" style="display:none">
+              <div class="sb-empty-icon">👥</div>
+              <div class="sb-empty-title">暂无客户</div>
+              <div class="sb-empty-desc">客户注册或下单后将自动出现在这里</div>
+            </div>
+          </div>
+          <div class="sb-card-footer">
+            <span class="text-sm text-muted"><span id="customerTotal">0</span> 位客户</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 客户细分 ==================== -->
+      <div id="page-segments" style="display:none">
+        <div class="page-header">
+          <h1>客户细分</h1>
+          <button class="sb-btn sb-btn-primary" onclick="adminToast('创建细分功能开发中')">创建细分</button>
+        </div>
+        <div class="sb-grid-3" id="segmentCards"></div>
+      </div>
+      <!-- ==================== 数据分析 ==================== -->
+      <div id="page-analytics" style="display:none">
+        <div class="page-header">
+          <h1>数据分析</h1>
+          <div class="page-header-actions">
+            <select class="sb-select" style="width:auto;padding:6px 10px;font-size:.82rem" id="analyticsPeriod" onchange="renderAnalytics()">
+              <option value="7">近7天</option>
+              <option value="30">近30天</option>
+              <option value="90">近90天</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-label">总销售额</div>
+            <div class="stat-value" id="anaTotalSales">¥0</div>
+            <div class="sb-progress mt-8"><div class="sb-progress-bar" style="width:65%"></div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">订单数量</div>
+            <div class="stat-value" id="anaTotalOrders">0</div>
+            <div class="sb-progress mt-8"><div class="sb-progress-bar" style="width:45%"></div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">平均订单金额</div>
+            <div class="stat-value" id="anaAvgOrder">¥0</div>
+            <div class="sb-progress mt-8"><div class="sb-progress-bar" style="width:55%"></div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">转化率</div>
+            <div class="stat-value" id="anaConversion">0%</div>
+            <div class="sb-progress mt-8"><div class="sb-progress-bar" style="width:35%"></div></div>
+          </div>
+        </div>
+
+        <div class="sb-grid-2">
+          <div class="sb-card">
+            <div class="sb-card-header"><h2>销售趋势</h2></div>
+            <div class="sb-card-body">
+              <div class="bar-chart" id="analyticsSalesChart" style="height:240px"></div>
+            </div>
+          </div>
+          <div class="sb-card">
+            <div class="sb-card-header"><h2>热销商品 TOP 5</h2></div>
+            <div class="sb-card-body">
+              <div id="topProductsList"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sb-card">
+          <div class="sb-card-header"><h2>销售明细</h2></div>
+          <div class="sb-card-body no-pad">
+            <table class="sb-table">
+              <thead>
+                <tr>
+                  <th>日期</th>
+                  <th>订单数</th>
+                  <th>销售额</th>
+                  <th>平均单价</th>
+                  <th>趋势</th>
+                </tr>
+              </thead>
+              <tbody id="analyticsDetailBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 报告 ==================== -->
+      <div id="page-reports" style="display:none">
+        <div class="page-header"><h1>报告</h1></div>
+        <div class="sb-grid-2">
+          <div class="sb-card" style="cursor:pointer" onclick="showPage('analytics', document.querySelector('[onclick*=analytics]'))">
+            <div class="sb-card-body" style="text-align:center;padding:40px">
+              <div style="font-size:2.5rem;margin-bottom:12px">📊</div>
+              <h3 style="font-weight:600;margin-bottom:4px">销售报告</h3>
+              <p class="text-muted text-sm">查看销售趋势和详细分析</p>
+            </div>
+          </div>
+          <div class="sb-card" style="cursor:pointer" onclick="adminToast('访客报告开发中')">
+            <div class="sb-card-body" style="text-align:center;padding:40px">
+              <div style="font-size:2.5rem;margin-bottom:12px">👁️</div>
+              <h3 style="font-weight:600;margin-bottom:4px">访客报告</h3>
+              <p class="text-muted text-sm">了解流量来源和用户行为</p>
+            </div>
+          </div>
+          <div class="sb-card" style="cursor:pointer" onclick="adminToast('库存报告开发中')">
+            <div class="sb-card-body" style="text-align:center;padding:40px">
+              <div style="font-size:2.5rem;margin-bottom:12px">📦</div>
+              <h3 style="font-weight:600;margin-bottom:4px">库存报告</h3>
+              <p class="text-muted text-sm">监控库存水平和补货建议</p>
+            </div>
+          </div>
+          <div class="sb-card" style="cursor:pointer" onclick="adminToast('财务报告开发中')">
+            <div class="sb-card-body" style="text-align:center;padding:40px">
+              <div style="font-size:2.5rem;margin-bottom:12px">💰</div>
+              <h3 style="font-weight:600;margin-bottom:4px">财务报告</h3>
+              <p class="text-muted text-sm">收入、退款和税费概览</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 营销活动 ==================== -->
+      <div id="page-marketing" style="display:none">
+        <div class="page-header">
+          <h1>营销活动</h1>
+          <button class="sb-btn sb-btn-primary" onclick="adminToast('创建活动功能开发中')">创建活动</button>
+        </div>
+
+        <div class="sb-banner sb-banner-success">
+          🎉 利用营销活动提升销售额，吸引更多客户到您的店铺
+        </div>
+
+        <div class="sb-grid-3">
+          <div class="sb-card" style="cursor:pointer" onclick="adminToast('邮件营销开发中')">
+            <div class="sb-card-body" style="text-align:center;padding:30px">
+              <div style="font-size:2rem;margin-bottom:8px">📧</div>
+              <h3 style="font-weight:600;margin-bottom:4px;font-size:.9rem">邮件营销</h3>
+              <p class="text-muted text-sm">发送促销邮件给客户</p>
+            </div>
+          </div>
+          <div class="sb-card" style="cursor:pointer" onclick="adminToast('短信营销开发中')">
+            <div class="sb-card-body" style="text-align:center;padding:30px">
+              <div style="font-size:2rem;margin-bottom:8px">💬</div>
+              <h3 style="font-weight:600;margin-bottom:4px;font-size:.9rem">短信营销</h3>
+              <p class="text-muted text-sm">短信通知和促销推送</p>
+            </div>
+          </div>
+          <div class="sb-card" style="cursor:pointer" onclick="showPage('discounts', document.querySelector('[onclick*=discounts]'))">
+            <div class="sb-card-body" style="text-align:center;padding:30px">
+              <div style="font-size:2rem;margin-bottom:8px">🎟️</div>
+              <h3 style="font-weight:600;margin-bottom:4px;font-size:.9rem">折扣活动</h3>
+              <p class="text-muted text-sm">创建折扣码和自动折扣</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 折扣管理 ==================== -->
+      <div id="page-discounts" style="display:none">
+        <div class="page-header">
+          <h1>折扣管理</h1>
+          <div class="page-header-actions">
+            <button class="sb-btn sb-btn-primary" onclick="openDiscountModal()">创建折扣</button>
+          </div>
+        </div>
+
+        <div class="sb-card">
+          <div class="sb-tabs">
+            <button class="sb-tab active" onclick="filterDiscountTab('all', this)">全部</button>
+            <button class="sb-tab" onclick="filterDiscountTab('active', this)">生效中</button>
+            <button class="sb-tab" onclick="filterDiscountTab('scheduled', this)">计划中</button>
+            <button class="sb-tab" onclick="filterDiscountTab('expired', this)">已过期</button>
+          </div>
+          <div class="sb-card-body no-pad">
+            <div class="sb-table-responsive">
+              <table class="sb-table">
+                <thead>
+                  <tr>
+                    <th>折扣码</th>
+                    <th>类型</th>
+                    <th>折扣</th>
+                    <th>使用次数</th>
+                    <th>状态</th>
+                    <th class="actions-cell">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="discountTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 模板主题 ==================== -->
+      <div id="page-themes" style="display:none">
+        <div class="page-header">
+          <h1>模板主题</h1>
+          <button class="sb-btn sb-btn-secondary" onclick="adminToast('主题商店开发中')">浏览主题商店</button>
+        </div>
+
+        <div class="sb-card">
+          <div class="sb-card-header">
+            <div>
+              <h2>当前主题</h2>
+              <span class="text-sm text-muted">乐居经典 · 版本 2.0</span>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="sb-btn sb-btn-secondary" onclick="adminToast('自定义主题开发中')">自定义</button>
+              <button class="sb-btn sb-btn-secondary" onclick="location.href='store.html'">预览</button>
+            </div>
+          </div>
+          <div class="sb-card-body">
+            <div style="background:var(--sb-bg);border-radius:8px;padding:40px;text-align:center">
+              <div style="font-size:4rem;margin-bottom:12px">🎨</div>
+              <h3 style="font-weight:600;margin-bottom:8px">乐居经典主题</h3>
+              <p class="text-muted text-sm">简约现代的家居电商主题，支持响应式布局</p>
+              <div style="margin-top:16px;display:flex;gap:8px;justify-content:center">
+                <span class="sb-badge sb-badge-success"><span class="sb-badge-dot"></span> 已发布</span>
+                <span class="sb-badge sb-badge-info">响应式</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sb-card">
+          <div class="sb-card-header"><h2>主题库</h2></div>
+          <div class="sb-card-body">
+            <div class="sb-grid-3">
+              <div style="border:1px solid var(--sb-border);border-radius:8px;overflow:hidden">
+                <div style="background:#f0f0f0;padding:40px;text-align:center;font-size:3rem">🌿</div>
+                <div style="padding:16px">
+                  <h4 style="font-weight:600;font-size:.9rem">自然清新</h4>
+                  <p class="text-muted text-sm">清新自然风格，适合家居园艺</p>
+                  <button class="sb-btn sb-btn-secondary sb-btn-sm mt-8" onclick="adminToast('主题安装开发中')">安装</button>
+                </div>
+              </div>
+              <div style="border:1px solid var(--sb-border);border-radius:8px;overflow:hidden">
+                <div style="background:#2a2a2a;padding:40px;text-align:center;font-size:3rem">✨</div>
+                <div style="padding:16px">
+                  <h4 style="font-weight:600;font-size:.9rem">暗黑奢华</h4>
+                  <p class="text-muted text-sm">高端暗色系，适合轻奢品牌</p>
+                  <button class="sb-btn sb-btn-secondary sb-btn-sm mt-8" onclick="adminToast('主题安装开发中')">安装</button>
+                </div>
+              </div>
+              <div style="border:1px solid var(--sb-border);border-radius:8px;overflow:hidden">
+                <div style="background:#fdf2e9;padding:40px;text-align:center;font-size:3rem">🏖️</div>
+                <div style="padding:16px">
+                  <h4 style="font-weight:600;font-size:.9rem">阳光海岸</h4>
+                  <p class="text-muted text-sm">温暖色调，适合家居生活类</p>
+                  <button class="sb-btn sb-btn-secondary sb-btn-sm mt-8" onclick="adminToast('主题安装开发中')">安装</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 页面管理 ==================== -->
+      <div id="page-pages" style="display:none">
+        <div class="page-header">
+          <h1>页面管理</h1>
+          <button class="sb-btn sb-btn-primary" onclick="adminToast('创建页面功能开发中')">添加页面</button>
+        </div>
+        <div class="sb-card">
+          <div class="sb-card-body no-pad">
+            <table class="sb-table">
+              <thead><tr><th>页面标题</th><th>状态</th><th>创建时间</th><th class="actions-cell">操作</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><strong>首页</strong></td>
+                  <td><span class="sb-badge sb-badge-success"><span class="sb-badge-dot"></span> 已发布</span></td>
+                  <td class="text-muted">2024-01-01</td>
+                  <td class="actions-cell"><button class="sb-btn-icon" onclick="location.href='store.html'">👁️</button></td>
+                </tr>
+                <tr>
+                  <td><strong>商品列表</strong></td>
+                  <td><span class="sb-badge sb-badge-success"><span class="sb-badge-dot"></span> 已发布</span></td>
+                  <td class="text-muted">2024-01-01</td>
+                  <td class="actions-cell"><button class="sb-btn-icon" onclick="location.href='products.html'">👁️</button></td>
+                </tr>
+                <tr>
+                  <td><strong>购物车</strong></td>
+                  <td><span class="sb-badge sb-badge-success"><span class="sb-badge-dot"></span> 已发布</span></td>
+                  <td class="text-muted">2024-01-01</td>
+                  <td class="actions-cell"><button class="sb-btn-icon" onclick="location.href='cart.html'">👁️</button></td>
+                </tr>
+                <tr>
+                  <td><strong>结算页</strong></td>
+                  <td><span class="sb-badge sb-badge-success"><span class="sb-badge-dot"></span> 已发布</span></td>
+                  <td class="text-muted">2024-01-01</td>
+                  <td class="actions-cell"><button class="sb-btn-icon" onclick="location.href='checkout.html'">👁️</button></td>
+                </tr>
+                <tr>
+                  <td><strong>登录/注册</strong></td>
+                  <td><span class="sb-badge sb-badge-success"><span class="sb-badge-dot"></span> 已发布</span></td>
+                  <td class="text-muted">2024-01-01</td>
+                  <td class="actions-cell"><button class="sb-btn-icon" onclick="location.href='login.html'">👁️</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 导航菜单 ==================== -->
+      <div id="page-navigation" style="display:none">
+        <div class="page-header">
+          <h1>导航菜单</h1>
+          <button class="sb-btn sb-btn-primary" onclick="adminToast('添加菜单功能开发中')">添加菜单</button>
+        </div>
+        <div class="sb-card">
+          <div class="sb-card-header"><h2>主导航</h2></div>
+          <div class="sb-card-body">
+            <div style="display:flex;flex-direction:column;gap:8px" id="navMenuItems">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 应用市场 ==================== -->
+      <div id="page-apps" style="display:none">
+        <div class="page-header"><h1>应用市场</h1></div>
+        <div class="sb-banner sb-banner-info">
+          🧩 通过安装应用扩展您的商店功能，提升运营效率
+        </div>
+        <div class="sb-grid-3">
+          <div class="sb-card">
+            <div class="sb-card-body" style="text-align:center;padding:24px">
+              <div style="font-size:2rem;margin-bottom:8px">📊</div>
+              <h3 style="font-weight:600;font-size:.9rem;margin-bottom:4px">Google Analytics</h3>
+              <p class="text-muted text-sm mb-8">集成Google分析追踪</p>
+              <button class="sb-btn sb-btn-secondary sb-btn-sm" onclick="adminToast('应用安装开发中')">安装</button>
+            </div>
+          </div>
+          <div class="sb-card">
+            <div class="sb-card-body" style="text-align:center;padding:24px">
+              <div style="font-size:2rem;margin-bottom:8px">💬</div>
+              <h3 style="font-weight:600;font-size:.9rem;margin-bottom:4px">在线客服</h3>
+              <p class="text-muted text-sm mb-8">实时在线聊天支持</p>
+              <button class="sb-btn sb-btn-secondary sb-btn-sm" onclick="adminToast('应用安装开发中')">安装</button>
+            </div>
+          </div>
+          <div class="sb-card">
+            <div class="sb-card-body" style="text-align:center;padding:24px">
+              <div style="font-size:2rem;margin-bottom:8px">⭐</div>
+              <h3 style="font-weight:600;font-size:.9rem;margin-bottom:4px">商品评价</h3>
+              <p class="text-muted text-sm mb-8">收集和展示客户评价</p>
+              <button class="sb-btn sb-btn-secondary sb-btn-sm" onclick="adminToast('应用安装开发中')">安装</button>
+            </div>
+          </div>
+          <div class="sb-card">
+            <div class="sb-card-body" style="text-align:center;padding:24px">
+              <div style="font-size:2rem;margin-bottom:8px">📱</div>
+              <h3 style="font-weight:600;font-size:.9rem;margin-bottom:4px">微信小程序</h3>
+              <p class="text-muted text-sm mb-8">一键生成微信小程序</p>
+              <button class="sb-btn sb-btn-secondary sb-btn-sm" onclick="adminToast('应用安装开发中')">安装</button>
+            </div>
+          </div>
+          <div class="sb-card">
+            <div class="sb-card-body" style="text-align:center;padding:24px">
+              <div style="font-size:2rem;margin-bottom:8px">🚚</div>
+              <h3 style="font-weight:600;font-size:.9rem;margin-bottom:4px">物流追踪</h3>
+              <p class="text-muted text-sm mb-8">自动同步快递信息</p>
+              <button class="sb-btn sb-btn-secondary sb-btn-sm" onclick="adminToast('应用安装开发中')">安装</button>
+            </div>
+          </div>
+          <div class="sb-card">
+            <div class="sb-card-body" style="text-align:center;padding:24px">
+              <div style="font-size:2rem;margin-bottom:8px">🔄</div>
+              <h3 style="font-weight:600;font-size:.9rem;margin-bottom:4px">自动备份</h3>
+              <p class="text-muted text-sm mb-8">数据自动备份与恢复</p>
+              <button class="sb-btn sb-btn-secondary sb-btn-sm" onclick="adminToast('应用安装开发中')">安装</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ==================== 设置 ==================== -->
+      <div id="page-settings" style="display:none">
+        <div class="page-header"><h1>设置</h1></div>
+        <div class="sb-grid-2">
+          <div class="sb-card" style="cursor:pointer" onclick="adminToast('通用设置开发中')">
+            <div class="sb-card-body" style="display:flex;gap:16px;align-items:center">
+              <div style="font-size:1.8rem">🏪</div>
+              <div>
+                <h3 style="font-weight:600;font-size:.9rem">通用设置</h3>
+                <p class="text-muted text-sm">店铺名称、联系信息、地址</p>
+              </div>
+            </div>
+          </div>
+          <div class="sb-card" style="cursor:pointer" onclick="adminToast('支付设置开发中')">
+            <div class="sb-card-body" style="display:flex;gap:16px;align-items:center">
+              <div style="font-size:1.8rem">💳</div>
+              <div>
+                <h3 style="font-weight:600;font-size:.9rem">支付方式</h3>
+                <p class="text-muted text-sm">微信支付、支付宝、货到付款</p>
+              </div>
+            </div>
+          </div>
+          <div class="sb-card" style="cursor:pointer" onclick="adminToast('配送设置开发中')">
+            <div class="sb-card-body" style="display:flex;gap:16px;align-items:center">
+              <div style="font-size:1.8rem">🚚</div>
+              <div>
+                <h3 style="font-weight:600;font-size:.9rem">配送与物流</h3>
+                <p class="text-muted text-sm">运费模板、配送区域</p>
+              </div>
+            </div>
+          </div>
+          <div class="sb-card" style="cursor:pointer" onclick="adminToast('税费设置开发中')">
+            <div class="sb-card-body" style="display:flex;gap:16px;align-items:center">
+              <div style="font-size:1.8rem">🧾</div>
+              <div>
+                <h3 style="font-weight:600;font-size:.9rem">税费</h3>
+                <p class="text-muted text-sm">税率配置和发票管理</p>
+              </div>
+            </div>
+          </div>
+          <div class="sb-card" style="cursor:pointer" onclick="adminToast('通知设置开发中')">
+            <div class="sb-card-body" style="display:flex;gap:16px;align-items:center">
+              <div style="font-size:1.8rem">🔔</div>
+              <div>
+                <h3 style="font-weight:600;font-size:.9rem">通知</h3>
+                <p class="text-muted text-sm">邮件通知、短信提醒模板</p>
+              </div>
+            </div>
+          </div>
+          <div class="sb-card" style="cursor:pointer" onclick="adminToast('域名设置开发中')">
+            <div class="sb-card-body" style="display:flex;gap:16px;align-items:center">
+              <div style="font-size:1.8rem">🌐</div>
+              <div>
+                <h3 style="font-weight:600;font-size:.9rem">域名</h3>
+                <p class="text-muted text-sm">自定义域名绑定</p>
+              </div>
+            </div>
+          </div>
+          <div class="sb-card" style="cursor:pointer" onclick="adminToast('用户权限开发中')">
+            <div class="sb-card-body" style="display:flex;gap:16px;align-items:center">
+              <div style="font-size:1.8rem">👤</div>
+              <div>
+                <h3 style="font-weight:600;font-size:.9rem">用户和权限</h3>
+                <p class="text-muted text-sm">管理员账户和权限设置</p>
+              </div>
+            </div>
+          </div>
+          <div class="sb-card" style="cursor:pointer" onclick="adminToast('法务合规开发中')">
+            <div class="sb-card-body" style="display:flex;gap:16px;align-items:center">
+              <div style="font-size:1.8rem">📜</div>
+              <div>
+                <h3 style="font-weight:600;font-size:.9rem">法务与合规</h3>
+                <p class="text-muted text-sm">隐私政策、退款政策、服务条款</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end admin-content -->
+  </div><!-- end admin-main -->
+</div><!-- end admin-layout -->
+
+<!-- ==================== 商品编辑模态框 ==================== -->
+<div class="sb-modal-overlay" id="productModal">
+  <div class="sb-modal sb-modal-lg">
+    <div class="sb-modal-header">
+      <h3 id="productModalTitle">添加商品</h3>
+      <button class="sb-modal-close" onclick="closeProductModal()">&times;</button>
     </div>
-  </div>
-</div>
-
-<!-- 商品编辑模态框 -->
-<div class="modal-overlay" id="productModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h3 id="modalTitle">新增商品</h3>
-      <button class="modal-close" onclick="closeProductModal()">&times;</button>
-    </div>
-    <div class="modal-body">
+    <div class="sb-modal-body">
       <input type="hidden" id="editId">
-      <div class="admin-form-row">
-        <div class="admin-form-group">
-          <label>商品名称 *</label>
-          <input type="text" id="editName" placeholder="请输入商品名称">
+      <div class="sb-grid-2-1">
+        <div>
+          <div class="sb-form-group">
+            <label>商品名称 *</label>
+            <input type="text" class="sb-input" id="editName" placeholder="例如：日式手工陶瓷杯">
+          </div>
+          <div class="sb-form-group">
+            <label>商品描述</label>
+            <textarea class="sb-textarea" id="editDesc" rows="3" placeholder="为商品添加描述..."></textarea>
+          </div>
+          <div class="sb-form-group">
+            <label>详细信息</label>
+            <textarea class="sb-textarea" id="editDetail" rows="3" placeholder="商品详细规格和说明..."></textarea>
+          </div>
         </div>
-        <div class="admin-form-group">
-          <label>图标 Emoji</label>
-          <input type="text" id="editIcon" placeholder="如 🍵" maxlength="4">
+        <div>
+          <div class="sb-form-group">
+            <label>商品图标</label>
+            <input type="text" class="sb-input" id="editIcon" placeholder="如 🍵" maxlength="4" style="font-size:1.5rem;text-align:center">
+            <div class="sb-form-hint">使用 Emoji 作为商品图标</div>
+          </div>
+          <div class="sb-form-group">
+            <label>商品状态</label>
+            <select class="sb-select" id="editStatus">
+              <option value="active">已上架</option>
+              <option value="draft">草稿</option>
+              <option value="archived">已归档</option>
+            </select>
+          </div>
         </div>
       </div>
-      <div class="admin-form-row">
-        <div class="admin-form-group">
-          <label>分类 *</label>
-          <select id="editCategory">
+
+      <hr style="border:none;border-top:1px solid var(--sb-border-light);margin:16px 0">
+      <h4 style="font-weight:600;font-size:.9rem;margin-bottom:12px">价格与库存</h4>
+
+      <div class="sb-form-row">
+        <div class="sb-form-group">
+          <label>售价 (¥) *</label>
+          <input type="number" class="sb-input" id="editPrice" placeholder="0.00" step="0.01" min="0">
+        </div>
+        <div class="sb-form-group">
+          <label>原价 (¥)</label>
+          <input type="number" class="sb-input" id="editOrigPrice" placeholder="留空则不显示划线价" step="0.01" min="0">
+          <div class="sb-form-hint">设置后将显示折扣</div>
+        </div>
+      </div>
+      <div class="sb-form-row">
+        <div class="sb-form-group">
+          <label>库存数量 *</label>
+          <input type="number" class="sb-input" id="editStock" placeholder="0" min="0">
+        </div>
+        <div class="sb-form-group">
+          <label>SKU</label>
+          <input type="text" class="sb-input" id="editSku" placeholder="商品编码（可选）">
+        </div>
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--sb-border-light);margin:16px 0">
+      <h4 style="font-weight:600;font-size:.9rem;margin-bottom:12px">组织与分类</h4>
+
+      <div class="sb-form-row">
+        <div class="sb-form-group">
+          <label>商品分类 *</label>
+          <select class="sb-select" id="editCategory">
             <option value="kitchen">厨房用品</option>
             <option value="bedroom">卧室家纺</option>
             <option value="bathroom">卫浴用品</option>
@@ -268,144 +1066,215 @@
             <option value="lighting">灯具照明</option>
           </select>
         </div>
-        <div class="admin-form-group">
-          <label>库存 *</label>
-          <input type="number" id="editStock" placeholder="0" min="0">
+        <div class="sb-form-group">
+          <label>商品标签</label>
+          <input type="text" class="sb-input" id="editBadge" placeholder="如：热卖、新品、特惠">
         </div>
       </div>
-      <div class="admin-form-row">
-        <div class="admin-form-group">
-          <label>售价 (¥) *</label>
-          <input type="number" id="editPrice" placeholder="0.00" step="0.01" min="0">
-        </div>
-        <div class="admin-form-group">
-          <label>原价 (¥)</label>
-          <input type="number" id="editOrigPrice" placeholder="留空则不显示划线价" step="0.01" min="0">
+      <div class="sb-form-group">
+        <label>特殊标记</label>
+        <div style="display:flex;gap:16px;margin-top:4px">
+          <label class="sb-checkbox"><input type="checkbox" id="editFeatured"> 热销推荐</label>
+          <label class="sb-checkbox"><input type="checkbox" id="editIsNew"> 新品上市</label>
         </div>
       </div>
-      <div class="admin-form-group">
-        <label>简介</label>
-        <textarea id="editDesc" rows="2" placeholder="商品简短描述"></textarea>
-      </div>
-      <div class="admin-form-group">
-        <label>详细描述</label>
-        <textarea id="editDetail" rows="3" placeholder="商品详细描述"></textarea>
-      </div>
-      <div class="admin-form-row">
-        <div class="admin-form-group">
-          <label>标签</label>
-          <input type="text" id="editBadge" placeholder="如：热卖、新品、特惠">
+    </div>
+    <div class="sb-modal-footer">
+      <button class="sb-btn sb-btn-secondary" onclick="closeProductModal()">取消</button>
+      <button class="sb-btn sb-btn-primary" onclick="saveProduct()">保存商品</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 订单详情模态框 ==================== -->
+<div class="sb-modal-overlay" id="orderDetailModal">
+  <div class="sb-modal sb-modal-lg">
+    <div class="sb-modal-header">
+      <h3 id="orderDetailTitle">订单详情</h3>
+      <button class="sb-modal-close" onclick="closeOrderDetail()">&times;</button>
+    </div>
+    <div class="sb-modal-body" id="orderDetailBody"></div>
+    <div class="sb-modal-footer">
+      <button class="sb-btn sb-btn-secondary" onclick="closeOrderDetail()">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 折扣编辑模态框 ==================== -->
+<div class="sb-modal-overlay" id="discountModal">
+  <div class="sb-modal">
+    <div class="sb-modal-header">
+      <h3 id="discountModalTitle">创建折扣</h3>
+      <button class="sb-modal-close" onclick="closeDiscountModal()">&times;</button>
+    </div>
+    <div class="sb-modal-body">
+      <div class="sb-form-group">
+        <label>折扣码</label>
+        <div style="display:flex;gap:8px">
+          <input type="text" class="sb-input" id="editDiscountCode" placeholder="例如：SUMMER20" style="text-transform:uppercase">
+          <button class="sb-btn sb-btn-secondary" onclick="generateDiscountCode()">随机生成</button>
         </div>
-        <div class="admin-form-group">
-          <label>特殊标记</label>
-          <select id="editFlags">
-            <option value="">无</option>
-            <option value="featured">热销推荐</option>
-            <option value="new">新品</option>
-            <option value="both">热销+新品</option>
+      </div>
+      <div class="sb-form-row">
+        <div class="sb-form-group">
+          <label>折扣类型</label>
+          <select class="sb-select" id="editDiscountType">
+            <option value="percentage">百分比折扣</option>
+            <option value="fixed">固定金额</option>
+            <option value="shipping">免运费</option>
           </select>
         </div>
+        <div class="sb-form-group">
+          <label>折扣值</label>
+          <input type="number" class="sb-input" id="editDiscountValue" placeholder="10" min="0">
+          <div class="sb-form-hint" id="discountValueHint">输入折扣百分比，如 10 表示 9折</div>
+        </div>
+      </div>
+      <div class="sb-form-row">
+        <div class="sb-form-group">
+          <label>最低消费 (¥)</label>
+          <input type="number" class="sb-input" id="editDiscountMin" placeholder="0" min="0">
+        </div>
+        <div class="sb-form-group">
+          <label>使用次数上限</label>
+          <input type="number" class="sb-input" id="editDiscountLimit" placeholder="不限" min="0">
+        </div>
+      </div>
+      <div class="sb-form-row">
+        <div class="sb-form-group">
+          <label>开始日期</label>
+          <input type="date" class="sb-input" id="editDiscountStart">
+        </div>
+        <div class="sb-form-group">
+          <label>结束日期</label>
+          <input type="date" class="sb-input" id="editDiscountEnd">
+        </div>
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="admin-btn admin-btn-outline" onclick="closeProductModal()">取消</button>
-      <button class="admin-btn admin-btn-primary" onclick="saveProduct()">保存</button>
+    <div class="sb-modal-footer">
+      <button class="sb-btn sb-btn-secondary" onclick="closeDiscountModal()">取消</button>
+      <button class="sb-btn sb-btn-primary" onclick="saveDiscount()">保存折扣</button>
     </div>
   </div>
 </div>
 
-<!-- 订单详情模态框 -->
-<div class="modal-overlay" id="orderDetailModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h3>订单详情</h3>
-      <button class="modal-close" onclick="closeOrderDetail()">&times;</button>
+<!-- 库存编辑模态框 -->
+<div class="sb-modal-overlay" id="stockModal">
+  <div class="sb-modal" style="width:400px">
+    <div class="sb-modal-header">
+      <h3>调整库存</h3>
+      <button class="sb-modal-close" onclick="closeStockModal()">&times;</button>
     </div>
-    <div class="modal-body" id="orderDetailBody"></div>
-    <div class="modal-footer">
-      <button class="admin-btn admin-btn-outline" onclick="closeOrderDetail()">关闭</button>
+    <div class="sb-modal-body">
+      <p class="mb-8" id="stockProductName" style="font-weight:600"></p>
+      <div class="sb-form-group">
+        <label>新库存数量</label>
+        <input type="number" class="sb-input" id="editNewStock" min="0">
+      </div>
+      <input type="hidden" id="editStockProductId">
+    </div>
+    <div class="sb-modal-footer">
+      <button class="sb-btn sb-btn-secondary" onclick="closeStockModal()">取消</button>
+      <button class="sb-btn sb-btn-primary" onclick="saveStock()">保存</button>
     </div>
   </div>
 </div>
 
-<!-- Toast -->
-<div class="admin-toast" id="adminToast"></div>
+<!-- Toast 容器 -->
+<div class="sb-toast-container" id="toastContainer"></div>
 
 <script>
-// ==================== 数据源 ====================
-// 引用前台的商品数据
-const catNames = { kitchen: '厨房用品', bedroom: '卧室家纺', bathroom: '卫浴用品', decor: '装饰摆件', storage: '收纳整理', lighting: '灯具照明' };
+// ==================== 数据层 ====================
+const catNames = { kitchen:'厨房用品', bedroom:'卧室家纺', bathroom:'卫浴用品', decor:'装饰摆件', storage:'收纳整理', lighting:'灯具照明' };
 
-function getAdminProducts() {
-  // 优先从 localStorage 读取管理员修改过的数据，否则用默认数据
+function getProducts() {
   const saved = localStorage.getItem('leju_admin_products');
   if (saved) return JSON.parse(saved);
-  // 默认商品数据
   return [
-    { id:1, name:'日式手工陶瓷杯', category:'kitchen', icon:'🍵', price:39.90, originalPrice:59.90, stock:120, featured:true, isNew:false, description:'采用传统手工拉坯工艺，温润如玉的釉面触感', badge:'热卖', active:true },
-    { id:2, name:'北欧风不锈钢刀具套装', category:'kitchen', icon:'🔪', price:168.00, originalPrice:238.00, stock:45, featured:true, isNew:false, description:'德国工艺不锈钢锻造', badge:'特惠', active:true },
-    { id:3, name:'珐琅彩搪瓷炖锅', category:'kitchen', icon:'🍲', price:259.00, originalPrice:359.00, stock:30, featured:false, isNew:true, description:'精铸铁胎搪瓷锅', badge:'新品', active:true },
-    { id:4, name:'竹木砧板三件套', category:'kitchen', icon:'🪵', price:78.00, originalPrice:null, stock:200, featured:false, isNew:false, description:'天然整竹制作', badge:'', active:true },
-    { id:5, name:'全棉四件套（云朵白）', category:'bedroom', icon:'🛏️', price:299.00, originalPrice:459.00, stock:60, featured:true, isNew:false, description:'60支长绒棉面料', badge:'爆款', active:true },
-    { id:6, name:'记忆棉护颈枕', category:'bedroom', icon:'💤', price:129.00, originalPrice:199.00, stock:80, featured:true, isNew:false, description:'慢回弹太空记忆棉', badge:'好评如潮', active:true },
-    { id:7, name:'法兰绒加厚毛毯', category:'bedroom', icon:'🧶', price:89.00, originalPrice:139.00, stock:100, featured:false, isNew:true, description:'双面法兰绒材质', badge:'', active:true },
-    { id:8, name:'智能感应皂液器', category:'bathroom', icon:'🧴', price:69.00, originalPrice:99.00, stock:150, featured:false, isNew:true, description:'红外自动感应出泡', badge:'新品', active:true },
-    { id:9, name:'日式天然硅藻泥地垫', category:'bathroom', icon:'🧽', price:58.00, originalPrice:79.00, stock:90, featured:true, isNew:false, description:'天然硅藻土材质', badge:'', active:true },
-    { id:10, name:'旋转置物架（免钉）', category:'bathroom', icon:'🗄️', price:45.00, originalPrice:null, stock:200, featured:false, isNew:false, description:'360度旋转设计', badge:'', active:true },
-    { id:11, name:'北欧风干花花瓶套装', category:'decor', icon:'🏺', price:88.00, originalPrice:128.00, stock:55, featured:true, isNew:false, description:'磨砂玻璃花瓶配永生干花', badge:'颜值担当', active:true },
-    { id:12, name:'创意小夜灯（月球）', category:'decor', icon:'🌙', price:49.00, originalPrice:79.00, stock:120, featured:false, isNew:true, description:'3D打印月球表面纹理', badge:'', active:true },
-    { id:13, name:'棉麻折叠收纳箱（3只装）', category:'storage', icon:'📦', price:55.00, originalPrice:85.00, stock:180, featured:true, isNew:false, description:'加厚棉麻面料', badge:'实用之选', active:true },
-    { id:14, name:'桌面文具收纳盒', category:'storage', icon:'✏️', price:35.00, originalPrice:null, stock:200, featured:false, isNew:true, description:'多格分区设计', badge:'', active:true },
-    { id:15, name:'LED护眼台灯', category:'lighting', icon:'💡', price:158.00, originalPrice:228.00, stock:40, featured:false, isNew:true, description:'无频闪无蓝光危害', badge:'护眼推荐', active:true },
-    { id:16, name:'复古实木小吊灯', category:'lighting', icon:'🪔', price:199.00, originalPrice:299.00, stock:25, featured:true, isNew:false, description:'日式原木灯罩+铁艺灯架', badge:'', active:true },
+    { id:1, name:'日式手工陶瓷杯', category:'kitchen', icon:'🍵', price:39.90, originalPrice:59.90, stock:120, featured:true, isNew:false, description:'采用传统手工拉坯工艺，温润如玉的釉面触感', badge:'热卖', active:true, status:'active' },
+    { id:2, name:'北欧风不锈钢刀具套装', category:'kitchen', icon:'🔪', price:168.00, originalPrice:238.00, stock:45, featured:true, isNew:false, description:'德国工艺不锈钢锻造', badge:'特惠', active:true, status:'active' },
+    { id:3, name:'珐琅彩搪瓷炖锅', category:'kitchen', icon:'🍲', price:259.00, originalPrice:359.00, stock:30, featured:false, isNew:true, description:'精铸铁胎搪瓷锅', badge:'新品', active:true, status:'active' },
+    { id:4, name:'竹木砧板三件套', category:'kitchen', icon:'🪵', price:78.00, originalPrice:null, stock:200, featured:false, isNew:false, description:'天然整竹制作', badge:'', active:true, status:'active' },
+    { id:5, name:'全棉四件套（云朵白）', category:'bedroom', icon:'🛏️', price:299.00, originalPrice:459.00, stock:60, featured:true, isNew:false, description:'60支长绒棉面料', badge:'爆款', active:true, status:'active' },
+    { id:6, name:'记忆棉护颈枕', category:'bedroom', icon:'💤', price:129.00, originalPrice:199.00, stock:80, featured:true, isNew:false, description:'慢回弹太空记忆棉', badge:'好评如潮', active:true, status:'active' },
+    { id:7, name:'法兰绒加厚毛毯', category:'bedroom', icon:'🧶', price:89.00, originalPrice:139.00, stock:100, featured:false, isNew:true, description:'双面法兰绒材质', badge:'', active:true, status:'active' },
+    { id:8, name:'智能感应皂液器', category:'bathroom', icon:'🧴', price:69.00, originalPrice:99.00, stock:150, featured:false, isNew:true, description:'红外自动感应出泡', badge:'新品', active:true, status:'active' },
+    { id:9, name:'日式天然硅藻泥地垫', category:'bathroom', icon:'🧽', price:58.00, originalPrice:79.00, stock:8, featured:true, isNew:false, description:'天然硅藻土材质', badge:'', active:true, status:'active' },
+    { id:10, name:'旋转置物架（免钉）', category:'bathroom', icon:'🗄️', price:45.00, originalPrice:null, stock:200, featured:false, isNew:false, description:'360度旋转设计', badge:'', active:true, status:'active' },
+    { id:11, name:'北欧风干花花瓶套装', category:'decor', icon:'🏺', price:88.00, originalPrice:128.00, stock:5, featured:true, isNew:false, description:'磨砂玻璃花瓶配永生干花', badge:'颜值担当', active:true, status:'active' },
+    { id:12, name:'创意小夜灯（月球）', category:'decor', icon:'🌙', price:49.00, originalPrice:79.00, stock:120, featured:false, isNew:true, description:'3D打印月球表面纹理', badge:'', active:true, status:'active' },
+    { id:13, name:'棉麻折叠收纳箱（3只装）', category:'storage', icon:'📦', price:55.00, originalPrice:85.00, stock:180, featured:true, isNew:false, description:'加厚棉麻面料', badge:'实用之选', active:true, status:'active' },
+    { id:14, name:'桌面文具收纳盒', category:'storage', icon:'✏️', price:35.00, originalPrice:null, stock:200, featured:false, isNew:true, description:'多格分区设计', badge:'', active:true, status:'active' },
+    { id:15, name:'LED护眼台灯', category:'lighting', icon:'💡', price:158.00, originalPrice:228.00, stock:3, featured:false, isNew:true, description:'无频闪无蓝光危害', badge:'护眼推荐', active:true, status:'active' },
+    { id:16, name:'复古实木小吊灯', category:'lighting', icon:'🪔', price:199.00, originalPrice:299.00, stock:25, featured:true, isNew:false, description:'日式原木灯罩+铁艺灯架', badge:'', active:true, status:'active' },
   ];
 }
 
-function saveAdminProducts(data) {
-  localStorage.setItem('leju_admin_products', JSON.stringify(data));
+function saveProducts(data) { localStorage.setItem('leju_admin_products', JSON.stringify(data)); }
+function getOrders() { return JSON.parse(localStorage.getItem('leju_orders') || '[]'); }
+function saveOrders(orders) { localStorage.setItem('leju_orders', JSON.stringify(orders)); }
+function getUsers() { return JSON.parse(localStorage.getItem('leju_users') || '[]'); }
+function getDiscounts() { return JSON.parse(localStorage.getItem('leju_discounts') || '[]'); }
+function saveDiscounts(d) { localStorage.setItem('leju_discounts', JSON.stringify(d)); }
+
+// ==================== 通知 ====================
+function adminToast(msg, type) {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'sb-toast' + (type ? ' sb-toast-' + type : '');
+  toast.textContent = msg;
+  container.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add('show'));
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
 }
 
-function getOrders() {
-  return JSON.parse(localStorage.getItem('leju_orders') || '[]');
-}
-
-function saveOrders(orders) {
-  localStorage.setItem('leju_orders', JSON.stringify(orders));
-}
-
-function getUsers() {
-  return JSON.parse(localStorage.getItem('leju_users') || '[]');
+// ==================== 侧边栏 ====================
+function toggleSidebar() {
+  document.getElementById('adminSidebar').classList.toggle('mobile-open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
 }
 
 // ==================== 页面切换 ====================
-function showPage(page) {
+function showPage(page, navEl) {
   document.querySelectorAll('[id^="page-"]').forEach(el => el.style.display = 'none');
-  document.getElementById('page-' + page).style.display = 'block';
+  const pageEl = document.getElementById('page-' + page);
+  if (pageEl) pageEl.style.display = 'block';
+
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  event.currentTarget.classList.add('active');
+  if (navEl) navEl.classList.add('active');
 
-  const titles = { dashboard: '数据看板', products: '商品管理', orders: '订单管理', users: '用户管理' };
-  document.getElementById('pageTitle').textContent = titles[page] || '';
+  // 关闭移动端侧边栏
+  document.getElementById('adminSidebar').classList.remove('mobile-open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
 
-  if (page === 'dashboard') renderDashboard();
-  if (page === 'products') renderProductTable();
-  if (page === 'orders') renderOrderTable();
-  if (page === 'users') renderUserTable();
-}
-
-function adminToast(msg) {
-  const el = document.getElementById('adminToast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(el._t);
-  el._t = setTimeout(() => el.classList.remove('show'), 2500);
+  // 渲染页面数据
+  const renderers = {
+    dashboard: renderDashboard,
+    orders: renderOrderTable,
+    products: renderProductTable,
+    inventory: renderInventoryTable,
+    collections: renderCollections,
+    customers: renderCustomerTable,
+    segments: renderSegments,
+    analytics: renderAnalytics,
+    discounts: renderDiscountTable,
+    navigation: renderNavMenu,
+  };
+  if (renderers[page]) renderers[page]();
 }
 
 // ==================== 数据看板 ====================
 function renderDashboard() {
   const orders = getOrders();
   const users = getUsers();
-  const prods = getAdminProducts();
+  const prods = getProducts();
+
+  // 日期
+  const now = new Date();
+  document.getElementById('dashboardDate').textContent = now.getFullYear() + '年' + (now.getMonth()+1) + '月' + now.getDate() + '日';
 
   // 统计
   let totalSales = 0;
@@ -417,43 +1286,44 @@ function renderDashboard() {
   });
 
   document.getElementById('statSales').textContent = '¥' + totalSales.toFixed(2);
-  document.getElementById('statSalesTrend').textContent = totalSales > 0 ? '↑ 持续增长' : '';
+  document.getElementById('statSalesChange').innerHTML = totalSales > 0 ? '↑ 持续增长' : '暂无销售数据';
   document.getElementById('statOrders').textContent = orders.length;
-  document.getElementById('statOrdersTrend').textContent = orders.length > 0 ? '↑ ' + orders.length + ' 笔' : '';
+  document.getElementById('statOrdersChange').textContent = orders.length > 0 ? orders.length + ' 笔订单' : '';
+  document.getElementById('statProducts').textContent = prods.filter(p => p.active !== false && p.status !== 'archived').length;
+  document.getElementById('statProductsChange').textContent = prods.length + ' 款商品';
   document.getElementById('statUsers').textContent = users.length;
-  document.getElementById('statUsersTrend').textContent = users.length > 0 ? '共 ' + users.length + ' 人' : '';
-  document.getElementById('statProducts').textContent = prods.filter(p => p.active !== false).length;
-  document.getElementById('statProductsTrend').textContent = prods.length + ' 款在库';
+  document.getElementById('statUsersChange').textContent = users.length > 0 ? users.length + ' 位客户' : '';
 
-  // 订单待处理数
+  // 订单badge
   const pending = orders.filter(o => o.status === '待支付').length;
-  document.getElementById('orderBadge').textContent = pending;
-  document.getElementById('orderBadge').style.display = pending > 0 ? 'inline' : 'none';
+  const badge = document.getElementById('orderBadge');
+  badge.textContent = pending;
+  badge.style.display = pending > 0 ? 'inline' : 'none';
 
-  // 销售柱状图
+  // 通知
+  document.getElementById('notifDot').style.display = pending > 0 ? 'block' : 'none';
+
+  // 图表
   updateSalesChart('7');
-
-  // 品类占比
   renderCategoryChart(orders, prods);
-
-  // 最新订单
-  renderRecentOrders(orders, prods);
+  renderRecentActivity(orders);
+  renderDashRecentOrders(orders, prods);
+  renderLowStock(prods);
 }
 
 function updateSalesChart(days) {
   const chart = document.getElementById('salesChart');
   const d = parseInt(days);
-  // 模拟数据
-  const data = [];
   const orders = getOrders();
-  const prods = getAdminProducts();
+  const prods = getProducts();
+  const data = [];
+
   for (let i = d - 1; i >= 0; i--) {
     const date = new Date();
     date.setDate(date.getDate() - i);
-    const label = (date.getMonth() + 1) + '/' + date.getDate();
-    // 简单按日期匹配
+    const label = (date.getMonth()+1) + '/' + date.getDate();
     let daySales = 0;
-    if (i === 0) { // 今天
+    if (i === 0) {
       orders.forEach(o => {
         o.items.forEach(item => {
           const p = prods.find(pr => pr.id === item.id);
@@ -461,7 +1331,7 @@ function updateSalesChart(days) {
         });
       });
     } else {
-      daySales = Math.random() * 800 + 100; // 模拟历史
+      daySales = Math.random() * 800 + 100;
     }
     data.push({ label, value: daySales });
   }
@@ -480,92 +1350,326 @@ function renderCategoryChart(orders, prods) {
   orders.forEach(o => {
     o.items.forEach(item => {
       const p = prods.find(pr => pr.id === item.id);
-      if (p) {
-        catSales[p.category] = (catSales[p.category] || 0) + p.price * item.qty;
-      }
+      if (p) catSales[p.category] = (catSales[p.category] || 0) + p.price * item.qty;
     });
   });
-
-  // 补充无销售的分类
-  Object.keys(catNames).forEach(k => {
-    if (!catSales[k]) catSales[k] = Math.random() * 500 + 50; // 模拟
-  });
-
+  Object.keys(catNames).forEach(k => { if (!catSales[k]) catSales[k] = Math.random() * 500 + 50; });
   const total = Object.values(catSales).reduce((a, b) => a + b, 0);
-  const colors = ['#2d6a4f', '#40916c', '#d4a373', '#e9c46a', '#1890ff', '#722ed1'];
+  const colors = ['#008060', '#2c6ecb', '#b98900', '#d72c0d', '#5c6ac4', '#8c9196'];
   const entries = Object.entries(catSales).sort((a, b) => b[1] - a[1]);
 
   document.getElementById('categoryChart').innerHTML = entries.map(([cat, val], i) => {
     const pct = total > 0 ? ((val / total) * 100).toFixed(1) : '0';
-    return `
-    <div class="pie-item">
-      <div class="pie-color" style="background:${colors[i % colors.length]}"></div>
-      <div style="flex:1">
-        <div style="display:flex;justify-content:space-between">
-          <span class="pie-label">${catNames[cat] || cat}</span>
-          <span class="pie-value">${pct}%</span>
-        </div>
-        <div class="pie-bar"><div class="pie-bar-fill" style="width:${pct}%;background:${colors[i % colors.length]}"></div></div>
+    return `<div class="pie-row">
+      <div class="pie-dot" style="background:${colors[i % colors.length]}"></div>
+      <div class="pie-info">
+        <div class="pie-info-top"><span>${catNames[cat] || cat}</span><span class="fw-600">${pct}%</span></div>
+        <div class="pie-progress"><div class="pie-progress-bar" style="width:${pct}%;background:${colors[i % colors.length]}"></div></div>
       </div>
     </div>`;
   }).join('');
 }
 
-function renderRecentOrders(orders, prods) {
-  const tbody = document.getElementById('recentOrders');
-  const recent = orders.slice(-5).reverse();
-
+function renderRecentActivity(orders) {
+  const el = document.getElementById('recentActivity');
+  const recent = orders.slice(-4).reverse();
   if (recent.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#8c8c8c;padding:32px">暂无订单数据，前台下单后这里将自动显示</td></tr>';
+    el.innerHTML = '<div class="text-muted text-sm" style="padding:20px;text-align:center">暂无最近活动</div>';
     return;
   }
+  el.innerHTML = recent.map(o => {
+    const dotClass = o.status === '已完成' ? 'green' : o.status === '已发货' ? 'blue' : 'orange';
+    const icon = o.status === '已完成' ? '✅' : o.status === '已发货' ? '🚚' : '🛒';
+    return `<div class="timeline-item">
+      <div class="timeline-dot ${dotClass}">${icon}</div>
+      <div class="timeline-content">
+        <div class="timeline-text">订单 <strong>${o.id}</strong> ${o.status}</div>
+        <div class="timeline-time">${o.time}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
 
+function renderDashRecentOrders(orders, prods) {
+  const tbody = document.getElementById('dashRecentOrders');
+  const recent = orders.slice(-5).reverse();
+  if (recent.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--sb-text-muted);padding:40px">暂无订单，客户下单后将在此显示</td></tr>';
+    return;
+  }
   tbody.innerHTML = recent.map(o => {
     let amount = 0;
-    o.items.forEach(item => {
-      const p = prods.find(pr => pr.id === item.id);
-      if (p) amount += p.price * item.qty;
-    });
-    const statusClass = o.status === '已完成' ? 'status-success' : o.status === '已发货' ? 'status-info' : o.status === '已取消' ? 'status-danger' : 'status-warning';
-    return `<tr>
+    o.items.forEach(item => { const p = prods.find(pr => pr.id === item.id); if (p) amount += p.price * item.qty; });
+    const payBadge = o.status === '已取消' ? 'sb-badge-danger' : (o.status === '待支付' ? 'sb-badge-warning' : 'sb-badge-success');
+    const shipBadge = o.status === '已发货' ? 'sb-badge-info' : (o.status === '已完成' ? 'sb-badge-success' : 'sb-badge-default');
+    return `<tr style="cursor:pointer" onclick="viewOrder('${o.id}')">
       <td><strong>${o.id}</strong></td>
-      <td>${o.address ? o.address.name : '-'}</td>
+      <td>${o.address?.name || '-'}</td>
       <td>${o.items.length} 件</td>
-      <td>¥${amount.toFixed(2)}</td>
-      <td><span class="status ${statusClass}">${o.status}</span></td>
-      <td style="color:#8c8c8c">${o.time}</td>
+      <td class="fw-600">¥${amount.toFixed(2)}</td>
+      <td><span class="sb-badge ${payBadge}"><span class="sb-badge-dot"></span> ${o.status === '待支付' ? '待付款' : '已付款'}</span></td>
+      <td><span class="sb-badge ${shipBadge}"><span class="sb-badge-dot"></span> ${o.status}</span></td>
+      <td class="text-muted">${o.time}</td>
     </tr>`;
   }).join('');
 }
 
-// ==================== 商品管理 ====================
-function renderProductTable() {
-  const prods = getAdminProducts();
-  const search = (document.getElementById('productSearch')?.value || '').trim().toLowerCase();
-  const filtered = search ? prods.filter(p => p.name.toLowerCase().includes(search)) : prods;
-
-  document.getElementById('productTotal').textContent = filtered.length;
-  const tbody = document.getElementById('productTableBody');
-
-  tbody.innerHTML = filtered.map(p => `
+function renderLowStock(prods) {
+  const low = prods.filter(p => p.stock <= 10 && p.active !== false);
+  const card = document.getElementById('lowStockCard');
+  if (low.length === 0) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  document.getElementById('lowStockBody').innerHTML = low.map(p => `
     <tr>
-      <td>#${p.id}</td>
-      <td><span style="font-size:1.2rem;margin-right:8px">${p.icon || ''}</span> ${p.name}</td>
-      <td>${catNames[p.category] || p.category}</td>
-      <td><strong>¥${p.price.toFixed(2)}</strong>${p.originalPrice ? `<br><small style="color:#999;text-decoration:line-through">¥${p.originalPrice.toFixed(2)}</small>` : ''}</td>
-      <td>${p.stock}${p.stock <= 10 ? ' <span style="color:var(--admin-danger);font-size:.8rem">低库存</span>' : ''}</td>
-      <td><span class="status ${p.active !== false ? 'status-success' : 'status-default'}">${p.active !== false ? '在售' : '已下架'}</span></td>
-      <td>
-        <button class="admin-btn-icon" title="编辑" onclick="editProduct(${p.id})">&#x270F;&#xFE0F;</button>
-        <button class="admin-btn-icon" title="${p.active !== false ? '下架' : '上架'}" onclick="toggleProduct(${p.id})">${p.active !== false ? '&#x23F8;' : '&#x25B6;'}</button>
-        <button class="admin-btn-icon" title="删除" onclick="deleteProduct(${p.id})" style="color:var(--admin-danger)">&#x1F5D1;</button>
-      </td>
+      <td><span style="margin-right:6px">${p.icon||''}</span> ${p.name}</td>
+      <td><span class="sb-badge sb-badge-danger">${p.stock} 件</span></td>
+      <td class="actions-cell"><button class="sb-btn sb-btn-sm sb-btn-secondary" onclick="openStockModal(${p.id})">补货</button></td>
     </tr>
   `).join('');
 }
 
+// ==================== 订单管理 ====================
+let currentOrderFilter = 'all';
+
+function filterOrderTab(filter, btn) {
+  currentOrderFilter = filter;
+  document.querySelectorAll('#orderTabs .sb-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderOrderTable();
+}
+
+function renderOrderTable() {
+  const orders = getOrders();
+  const prods = getProducts();
+  const search = (document.getElementById('orderSearch')?.value || '').trim().toLowerCase();
+  let filtered = [...orders];
+  if (currentOrderFilter !== 'all') filtered = filtered.filter(o => o.status === currentOrderFilter);
+  if (search) filtered = filtered.filter(o => o.id.toLowerCase().includes(search) || (o.address?.name || '').toLowerCase().includes(search));
+
+  const tbody = document.getElementById('orderTableBody');
+  const empty = document.getElementById('orderEmpty');
+  const pagination = document.getElementById('orderPagination');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    pagination.style.display = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+  pagination.style.display = 'flex';
+  document.getElementById('orderCountInfo').textContent = `显示 ${filtered.length} 笔订单`;
+
+  tbody.innerHTML = filtered.reverse().map(o => {
+    let amount = 0;
+    o.items.forEach(item => { const p = prods.find(pr => pr.id === item.id); if (p) amount += p.price * item.qty; });
+    const payBadge = o.status === '已取消' ? 'sb-badge-danger' : (o.status === '待支付' ? 'sb-badge-warning' : 'sb-badge-success');
+    const shipBadge = o.status === '已发货' ? 'sb-badge-info' : (o.status === '已完成' ? 'sb-badge-success' : 'sb-badge-default');
+    const payNames = { wechat:'微信支付', alipay:'支付宝', cod:'货到付款' };
+    return `<tr>
+      <td class="checkbox-cell"><input type="checkbox"></td>
+      <td><a href="javascript:void(0)" onclick="viewOrder('${o.id}')" style="font-weight:600">${o.id}</a></td>
+      <td class="text-muted text-sm">${o.time}</td>
+      <td>${o.address?.name || '-'}</td>
+      <td>${o.items.length} 件</td>
+      <td class="fw-600">¥${amount.toFixed(2)}</td>
+      <td><span class="sb-badge ${payBadge}"><span class="sb-badge-dot"></span> ${o.status === '待支付' ? '待付款' : '已付款'}</span></td>
+      <td><span class="sb-badge ${shipBadge}"><span class="sb-badge-dot"></span> ${o.status}</span></td>
+      <td class="actions-cell">
+        ${o.status === '待支付' ? `<button class="sb-btn sb-btn-sm sb-btn-primary" onclick="shipOrder('${o.id}')">发货</button>` : ''}
+        ${o.status === '已发货' ? `<button class="sb-btn sb-btn-sm sb-btn-secondary" onclick="completeOrder('${o.id}')">完成</button>` : ''}
+        <button class="sb-btn-icon" onclick="viewOrder('${o.id}')" title="详情">📋</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function viewOrder(id) {
+  const orders = getOrders();
+  const prods = getProducts();
+  const o = orders.find(or => or.id === id);
+  if (!o) return;
+
+  let amount = 0;
+  const itemsHtml = o.items.map(item => {
+    const p = prods.find(pr => pr.id === item.id);
+    const lineTotal = p ? p.price * item.qty : 0;
+    amount += lineTotal;
+    return `<div class="order-item-row">
+      <div class="order-item-icon">${p ? p.icon : '📦'}</div>
+      <div class="order-item-info">
+        <div class="item-name">${p ? p.name : '未知商品'}</div>
+        <div class="item-variant">${p ? catNames[p.category] : ''}</div>
+      </div>
+      <div class="order-item-price">
+        <div class="price">¥${lineTotal.toFixed(2)}</div>
+        <div class="qty">x${item.qty}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const payNames = { wechat:'微信支付', alipay:'支付宝', cod:'货到付款' };
+  const payBadge = o.status === '待支付' ? 'sb-badge-warning' : 'sb-badge-success';
+  const shipBadge = o.status === '已发货' ? 'sb-badge-info' : (o.status === '已完成' ? 'sb-badge-success' : 'sb-badge-default');
+
+  document.getElementById('orderDetailTitle').textContent = '订单 ' + o.id;
+  document.getElementById('orderDetailBody').innerHTML = `
+    <div class="order-detail-grid">
+      <div>
+        <div class="sb-card" style="margin-bottom:16px">
+          <div class="sb-card-header">
+            <h2>商品明细</h2>
+            <span class="sb-badge ${shipBadge}"><span class="sb-badge-dot"></span> ${o.status}</span>
+          </div>
+          <div class="sb-card-body">
+            ${itemsHtml}
+            <div class="detail-row total">
+              <span>合计</span>
+              <span style="color:var(--sb-danger)">¥${amount.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+        <div class="sb-card">
+          <div class="sb-card-header"><h2>订单时间线</h2></div>
+          <div class="sb-card-body">
+            <div class="sb-timeline">
+              <div class="timeline-item">
+                <div class="timeline-dot orange">🛒</div>
+                <div class="timeline-content">
+                  <div class="timeline-text">订单创建</div>
+                  <div class="timeline-time">${o.time}</div>
+                </div>
+              </div>
+              ${o.status !== '待支付' ? `<div class="timeline-item">
+                <div class="timeline-dot green">💰</div>
+                <div class="timeline-content">
+                  <div class="timeline-text">已付款 · ${payNames[o.payment] || o.payment}</div>
+                  <div class="timeline-time">${o.time}</div>
+                </div>
+              </div>` : ''}
+              ${o.status === '已发货' || o.status === '已完成' ? `<div class="timeline-item">
+                <div class="timeline-dot blue">🚚</div>
+                <div class="timeline-content">
+                  <div class="timeline-text">已发货</div>
+                  <div class="timeline-time">${o.time}</div>
+                </div>
+              </div>` : ''}
+              ${o.status === '已完成' ? `<div class="timeline-item">
+                <div class="timeline-dot green">✅</div>
+                <div class="timeline-content">
+                  <div class="timeline-text">订单完成</div>
+                  <div class="timeline-time">${o.time}</div>
+                </div>
+              </div>` : ''}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="sb-card" style="margin-bottom:16px">
+          <div class="sb-card-header"><h2>客户信息</h2></div>
+          <div class="sb-card-body">
+            <div class="detail-row"><span class="label">收货人</span><span class="value">${o.address?.name || '-'}</span></div>
+            <div class="detail-row"><span class="label">电话</span><span class="value">${o.address?.phone || '-'}</span></div>
+            <div class="detail-row"><span class="label">地区</span><span class="value">${o.address?.region || '-'}</span></div>
+            <div class="detail-row"><span class="label">地址</span><span class="value">${o.address?.address || '-'}</span></div>
+            ${o.address?.note ? `<div class="detail-row"><span class="label">备注</span><span class="value">${o.address.note}</span></div>` : ''}
+          </div>
+        </div>
+        <div class="sb-card">
+          <div class="sb-card-header"><h2>支付信息</h2></div>
+          <div class="sb-card-body">
+            <div class="detail-row"><span class="label">支付状态</span><span class="sb-badge ${payBadge}"><span class="sb-badge-dot"></span> ${o.status === '待支付' ? '待付款' : '已付款'}</span></div>
+            <div class="detail-row"><span class="label">支付方式</span><span class="value">${payNames[o.payment] || o.payment || '-'}</span></div>
+            <div class="detail-row"><span class="label">订单金额</span><span class="value fw-600">¥${amount.toFixed(2)}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById('orderDetailModal').classList.add('show');
+}
+
+function closeOrderDetail() { document.getElementById('orderDetailModal').classList.remove('show'); }
+
+function shipOrder(id) {
+  const orders = getOrders();
+  const o = orders.find(or => or.id === id);
+  if (o) { o.status = '已发货'; saveOrders(orders); renderOrderTable(); adminToast('订单已标记为发货', 'success'); }
+}
+
+function completeOrder(id) {
+  const orders = getOrders();
+  const o = orders.find(or => or.id === id);
+  if (o) { o.status = '已完成'; saveOrders(orders); renderOrderTable(); adminToast('订单已完成', 'success'); }
+}
+
+function toggleAllOrders(el) {
+  document.querySelectorAll('#orderTableBody input[type=checkbox]').forEach(cb => cb.checked = el.checked);
+}
+
+function exportOrders() {
+  const orders = getOrders();
+  if (orders.length === 0) { adminToast('暂无订单数据可导出'); return; }
+  adminToast('订单数据导出成功', 'success');
+}
+
+// ==================== 商品管理 ====================
+let currentProductFilter = 'all';
+
+function filterProductTab(filter, btn) {
+  currentProductFilter = filter;
+  document.querySelectorAll('#productTabs .sb-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderProductTable();
+}
+
+function renderProductTable() {
+  const prods = getProducts();
+  const search = (document.getElementById('productSearch')?.value || '').trim().toLowerCase();
+  const catFilter = document.getElementById('productCatFilter')?.value || '';
+
+  let filtered = [...prods];
+  if (currentProductFilter === 'active') filtered = filtered.filter(p => p.active !== false && (p.status || 'active') === 'active');
+  else if (currentProductFilter === 'draft') filtered = filtered.filter(p => p.status === 'draft');
+  else if (currentProductFilter === 'archived') filtered = filtered.filter(p => p.status === 'archived');
+
+  if (search) filtered = filtered.filter(p => p.name.toLowerCase().includes(search));
+  if (catFilter) filtered = filtered.filter(p => p.category === catFilter);
+
+  document.getElementById('productTotal').textContent = filtered.length;
+  const tbody = document.getElementById('productTableBody');
+
+  tbody.innerHTML = filtered.map(p => {
+    const status = p.status || (p.active !== false ? 'active' : 'draft');
+    const statusBadge = status === 'active' ? 'sb-badge-success' : status === 'draft' ? 'sb-badge-warning' : 'sb-badge-default';
+    const statusText = status === 'active' ? '已上架' : status === 'draft' ? '草稿' : '已归档';
+    const stockBadge = p.stock <= 10 ? 'sb-badge-danger' : (p.stock <= 30 ? 'sb-badge-warning' : 'sb-badge-default');
+    return `<tr>
+      <td class="checkbox-cell"><input type="checkbox"></td>
+      <td style="font-size:1.3rem;width:40px">${p.icon || '📦'}</td>
+      <td>
+        <div><a href="javascript:void(0)" onclick="editProduct(${p.id})" style="font-weight:500">${p.name}</a></div>
+        ${p.badge ? `<span class="text-muted text-sm">${p.badge}</span>` : ''}
+      </td>
+      <td><span class="sb-badge ${statusBadge}"><span class="sb-badge-dot"></span> ${statusText}</span></td>
+      <td><span class="sb-badge ${stockBadge}">${p.stock} 件</span></td>
+      <td class="text-muted">${catNames[p.category] || p.category}</td>
+      <td>
+        <span class="fw-600">¥${p.price.toFixed(2)}</span>
+        ${p.originalPrice ? `<br><span class="text-muted text-sm" style="text-decoration:line-through">¥${p.originalPrice.toFixed(2)}</span>` : ''}
+      </td>
+      <td class="actions-cell">
+        <button class="sb-btn-icon" onclick="editProduct(${p.id})" title="编辑">✏️</button>
+        <button class="sb-btn-icon" onclick="toggleProduct(${p.id})" title="${p.active !== false ? '下架' : '上架'}">${p.active !== false ? '⏸' : '▶️'}</button>
+        <button class="sb-btn-icon" onclick="deleteProduct(${p.id})" title="删除" style="color:var(--sb-danger)">🗑️</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
 function openProductModal(product) {
-  document.getElementById('modalTitle').textContent = product ? '编辑商品' : '新增商品';
+  document.getElementById('productModalTitle').textContent = product ? '编辑商品' : '添加商品';
   document.getElementById('editId').value = product ? product.id : '';
   document.getElementById('editName').value = product ? product.name : '';
   document.getElementById('editIcon').value = product ? (product.icon || '') : '';
@@ -576,251 +1680,420 @@ function openProductModal(product) {
   document.getElementById('editDesc').value = product ? (product.description || '') : '';
   document.getElementById('editDetail').value = product ? (product.detail || '') : '';
   document.getElementById('editBadge').value = product ? (product.badge || '') : '';
-  const flags = product ? (product.featured && product.isNew ? 'both' : product.featured ? 'featured' : product.isNew ? 'new' : '') : '';
-  document.getElementById('editFlags').value = flags;
+  document.getElementById('editFeatured').checked = product ? !!product.featured : false;
+  document.getElementById('editIsNew').checked = product ? !!product.isNew : false;
+  document.getElementById('editStatus').value = product ? (product.status || 'active') : 'active';
   document.getElementById('productModal').classList.add('show');
 }
 
-function closeProductModal() {
-  document.getElementById('productModal').classList.remove('show');
-}
+function closeProductModal() { document.getElementById('productModal').classList.remove('show'); }
 
 function saveProduct() {
   const name = document.getElementById('editName').value.trim();
   const price = parseFloat(document.getElementById('editPrice').value);
   const stock = parseInt(document.getElementById('editStock').value);
+  if (!name) { adminToast('请输入商品名称', 'error'); return; }
+  if (isNaN(price) || price <= 0) { adminToast('请输入有效的价格', 'error'); return; }
+  if (isNaN(stock) || stock < 0) { adminToast('请输入有效的库存', 'error'); return; }
 
-  if (!name) { adminToast('请输入商品名称'); return; }
-  if (isNaN(price) || price <= 0) { adminToast('请输入有效的价格'); return; }
-  if (isNaN(stock) || stock < 0) { adminToast('请输入有效的库存'); return; }
-
-  const prods = getAdminProducts();
+  const prods = getProducts();
   const editId = document.getElementById('editId').value;
-  const flags = document.getElementById('editFlags').value;
   const origPrice = parseFloat(document.getElementById('editOrigPrice').value) || null;
+  const status = document.getElementById('editStatus').value;
 
   const data = {
     name,
     icon: document.getElementById('editIcon').value || '📦',
     category: document.getElementById('editCategory').value,
-    price,
-    originalPrice: origPrice,
-    stock,
+    price, originalPrice: origPrice, stock,
     description: document.getElementById('editDesc').value,
     detail: document.getElementById('editDetail').value,
     badge: document.getElementById('editBadge').value,
-    featured: flags === 'featured' || flags === 'both',
-    isNew: flags === 'new' || flags === 'both',
-    active: true,
+    featured: document.getElementById('editFeatured').checked,
+    isNew: document.getElementById('editIsNew').checked,
+    active: status !== 'archived',
+    status: status,
   };
 
   if (editId) {
     const idx = prods.findIndex(p => p.id === parseInt(editId));
     if (idx >= 0) Object.assign(prods[idx], data);
-    adminToast('商品已更新');
+    adminToast('商品已更新', 'success');
   } else {
     data.id = prods.length > 0 ? Math.max(...prods.map(p => p.id)) + 1 : 1;
     prods.push(data);
-    adminToast('商品已添加');
+    adminToast('商品已添加', 'success');
   }
-
-  saveAdminProducts(prods);
+  saveProducts(prods);
   closeProductModal();
   renderProductTable();
 }
 
-function editProduct(id) {
-  const prods = getAdminProducts();
-  const p = prods.find(pr => pr.id === id);
-  if (p) openProductModal(p);
-}
+function editProduct(id) { const p = getProducts().find(pr => pr.id === id); if (p) openProductModal(p); }
 
 function toggleProduct(id) {
-  const prods = getAdminProducts();
+  const prods = getProducts();
   const p = prods.find(pr => pr.id === id);
   if (p) {
-    p.active = p.active === false ? true : false;
-    saveAdminProducts(prods);
+    p.active = p.active === false;
+    p.status = p.active ? 'active' : 'draft';
+    saveProducts(prods);
     renderProductTable();
-    adminToast(p.active ? '商品已上架' : '商品已下架');
+    adminToast(p.active ? '商品已上架' : '商品已下架', 'success');
   }
 }
 
 function deleteProduct(id) {
-  if (!confirm('确定要删除这个商品吗？此操作不可恢复。')) return;
-  let prods = getAdminProducts().filter(p => p.id !== id);
-  saveAdminProducts(prods);
+  if (!confirm('确定要删除这个商品吗？')) return;
+  let prods = getProducts().filter(p => p.id !== id);
+  saveProducts(prods);
   renderProductTable();
-  adminToast('商品已删除');
+  adminToast('商品已删除', 'success');
 }
 
-// ==================== 订单管理 ====================
-let currentOrderFilter = '';
-
-function filterOrderStatus(status) {
-  currentOrderFilter = status;
-  renderOrderTable();
+function toggleAllProducts(el) {
+  document.querySelectorAll('#productTableBody input[type=checkbox]').forEach(cb => cb.checked = el.checked);
 }
 
-function renderOrderTable() {
-  const orders = getOrders();
-  const prods = getAdminProducts();
-  const search = (document.getElementById('orderSearch')?.value || '').trim().toLowerCase();
+function exportProducts() { adminToast('商品数据导出成功', 'success'); }
 
-  let filtered = [...orders];
-  if (currentOrderFilter) filtered = filtered.filter(o => o.status === currentOrderFilter);
-  if (search) filtered = filtered.filter(o => o.id.toLowerCase().includes(search) || (o.address?.name || '').toLowerCase().includes(search));
+// ==================== 库存管理 ====================
+let showLowStockOnly = false;
 
-  // 统计
-  document.getElementById('orderAll').textContent = orders.length;
-  document.getElementById('orderPending').textContent = orders.filter(o => o.status === '待支付').length;
-  document.getElementById('orderShipped').textContent = orders.filter(o => o.status === '已发货').length;
-  document.getElementById('orderDone').textContent = orders.filter(o => o.status === '已完成').length;
+function toggleLowStockFilter() {
+  showLowStockOnly = !showLowStockOnly;
+  document.getElementById('lowStockFilter').classList.toggle('active', showLowStockOnly);
+  renderInventoryTable();
+}
 
-  const tbody = document.getElementById('orderTableBody');
-  const empty = document.getElementById('orderEmpty');
+function renderInventoryTable() {
+  const prods = getProducts();
+  const search = (document.getElementById('inventorySearch')?.value || '').trim().toLowerCase();
+  let filtered = search ? prods.filter(p => p.name.toLowerCase().includes(search)) : [...prods];
+  if (showLowStockOnly) filtered = filtered.filter(p => p.stock <= 10);
 
-  if (filtered.length === 0) {
-    tbody.innerHTML = '';
-    empty.style.display = 'block';
-    return;
-  }
-  empty.style.display = 'none';
-
-  tbody.innerHTML = filtered.reverse().map(o => {
-    let amount = 0;
-    o.items.forEach(item => {
-      const p = prods.find(pr => pr.id === item.id);
-      if (p) amount += p.price * item.qty;
-    });
-    const statusClass = o.status === '已完成' ? 'status-success' : o.status === '已发货' ? 'status-info' : o.status === '已取消' ? 'status-danger' : 'status-warning';
-    const payNames = { wechat: '微信', alipay: '支付宝', cod: '货到付款' };
+  document.getElementById('inventoryTableBody').innerHTML = filtered.map(p => {
+    const stockBadge = p.stock <= 10 ? 'sb-badge-danger' : (p.stock <= 30 ? 'sb-badge-warning' : 'sb-badge-success');
+    const stockText = p.stock <= 10 ? '低库存' : (p.stock <= 30 ? '偏低' : '充足');
     return `<tr>
-      <td><strong>${o.id}</strong></td>
-      <td>${o.address?.name || '-'}</td>
-      <td style="font-size:.85rem">${o.address?.phone || '-'}<br>${o.address?.region || ''}</td>
-      <td>${o.items.length} 件</td>
-      <td><strong>¥${amount.toFixed(2)}</strong></td>
-      <td>${payNames[o.payment] || o.payment || '-'}</td>
-      <td><span class="status ${statusClass}">${o.status}</span></td>
-      <td style="font-size:.85rem;color:#8c8c8c">${o.time}</td>
-      <td>
-        <button class="admin-btn-icon" title="详情" onclick="viewOrder('${o.id}')">&#x1F4CB;</button>
-        ${o.status === '待支付' ? `<button class="admin-btn admin-btn-sm admin-btn-primary" onclick="shipOrder('${o.id}')">发货</button>` : ''}
-        ${o.status === '已发货' ? `<button class="admin-btn admin-btn-sm admin-btn-outline" onclick="completeOrder('${o.id}')">完成</button>` : ''}
-      </td>
+      <td><span style="margin-right:8px">${p.icon || '📦'}</span> ${p.name}</td>
+      <td class="text-muted">SKU-${String(p.id).padStart(4, '0')}</td>
+      <td class="text-muted">${catNames[p.category]}</td>
+      <td class="fw-600">${p.stock}</td>
+      <td><span class="sb-badge ${stockBadge}"><span class="sb-badge-dot"></span> ${stockText}</span></td>
+      <td class="actions-cell"><button class="sb-btn sb-btn-sm sb-btn-secondary" onclick="openStockModal(${p.id})">调整</button></td>
     </tr>`;
   }).join('');
 }
 
-function viewOrder(id) {
-  const orders = getOrders();
-  const prods = getAdminProducts();
-  const o = orders.find(or => or.id === id);
-  if (!o) return;
+function openStockModal(id) {
+  const p = getProducts().find(pr => pr.id === id);
+  if (!p) return;
+  document.getElementById('stockProductName').textContent = p.icon + ' ' + p.name;
+  document.getElementById('editNewStock').value = p.stock;
+  document.getElementById('editStockProductId').value = id;
+  document.getElementById('stockModal').classList.add('show');
+}
 
-  let amount = 0;
-  const itemsHtml = o.items.map(item => {
-    const p = prods.find(pr => pr.id === item.id);
-    const lineTotal = p ? p.price * item.qty : 0;
-    amount += lineTotal;
-    return `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f0f0f0">
-      <span>${p ? p.icon + ' ' + p.name : '未知商品'} x${item.qty}</span>
-      <span>¥${lineTotal.toFixed(2)}</span>
-    </div>`;
+function closeStockModal() { document.getElementById('stockModal').classList.remove('show'); }
+
+function saveStock() {
+  const id = parseInt(document.getElementById('editStockProductId').value);
+  const newStock = parseInt(document.getElementById('editNewStock').value);
+  if (isNaN(newStock) || newStock < 0) { adminToast('请输入有效库存', 'error'); return; }
+  const prods = getProducts();
+  const p = prods.find(pr => pr.id === id);
+  if (p) { p.stock = newStock; saveProducts(prods); }
+  closeStockModal();
+  renderInventoryTable();
+  adminToast('库存已更新', 'success');
+}
+
+// ==================== 商品系列 ====================
+function renderCollections() {
+  const prods = getProducts();
+  const collections = [
+    { name: '热销推荐', filter: p => p.featured, icon: '🔥' },
+    { name: '新品上市', filter: p => p.isNew, icon: '✨' },
+    { name: '厨房用品', filter: p => p.category === 'kitchen', icon: '🍳' },
+    { name: '卧室家纺', filter: p => p.category === 'bedroom', icon: '🛏️' },
+    { name: '卫浴用品', filter: p => p.category === 'bathroom', icon: '🛁' },
+    { name: '装饰摆件', filter: p => p.category === 'decor', icon: '🎨' },
+    { name: '收纳整理', filter: p => p.category === 'storage', icon: '📦' },
+    { name: '灯具照明', filter: p => p.category === 'lighting', icon: '💡' },
+  ];
+  document.getElementById('collectionsBody').innerHTML = collections.map(c => {
+    const count = prods.filter(c.filter).length;
+    return `<tr>
+      <td><span style="margin-right:8px">${c.icon}</span> <strong>${c.name}</strong></td>
+      <td>${count} 件</td>
+      <td><span class="sb-badge sb-badge-success"><span class="sb-badge-dot"></span> 已启用</span></td>
+      <td class="actions-cell"><button class="sb-btn-icon" onclick="adminToast('编辑系列开发中')">✏️</button></td>
+    </tr>`;
   }).join('');
-
-  const payNames = { wechat: '微信支付', alipay: '支付宝', cod: '货到付款' };
-
-  document.getElementById('orderDetailBody').innerHTML = `
-    <div style="margin-bottom:20px">
-      <h4 style="margin-bottom:12px;color:var(--admin-text-light)">订单信息</h4>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.9rem">
-        <div>订单号：<strong>${o.id}</strong></div>
-        <div>状态：<strong>${o.status}</strong></div>
-        <div>下单时间：${o.time}</div>
-        <div>支付方式：${payNames[o.payment] || o.payment}</div>
-      </div>
-    </div>
-    <div style="margin-bottom:20px">
-      <h4 style="margin-bottom:12px;color:var(--admin-text-light)">收货信息</h4>
-      <div style="font-size:.9rem;line-height:1.8">
-        <div>收货人：${o.address?.name || '-'}</div>
-        <div>电话：${o.address?.phone || '-'}</div>
-        <div>地址：${o.address?.region || ''} ${o.address?.address || '-'}</div>
-        ${o.address?.note ? `<div>备注：${o.address.note}</div>` : ''}
-      </div>
-    </div>
-    <div>
-      <h4 style="margin-bottom:12px;color:var(--admin-text-light)">商品明细</h4>
-      ${itemsHtml}
-      <div style="display:flex;justify-content:space-between;padding:12px 0;font-weight:700;font-size:1.1rem;color:#e63946">
-        <span>合计</span><span>¥${amount.toFixed(2)}</span>
-      </div>
-    </div>`;
-
-  document.getElementById('orderDetailModal').classList.add('show');
 }
 
-function closeOrderDetail() {
-  document.getElementById('orderDetailModal').classList.remove('show');
-}
-
-function shipOrder(id) {
-  const orders = getOrders();
-  const o = orders.find(or => or.id === id);
-  if (o) { o.status = '已发货'; saveOrders(orders); renderOrderTable(); renderDashboard(); adminToast('已标记为发货'); }
-}
-
-function completeOrder(id) {
-  const orders = getOrders();
-  const o = orders.find(or => or.id === id);
-  if (o) { o.status = '已完成'; saveOrders(orders); renderOrderTable(); renderDashboard(); adminToast('订单已完成'); }
-}
-
-// ==================== 用户管理 ====================
-function renderUserTable() {
+// ==================== 客户管理 ====================
+function renderCustomerTable() {
   const users = getUsers();
   const orders = getOrders();
-  const prods = getAdminProducts();
-  const search = (document.getElementById('userSearch')?.value || '').trim().toLowerCase();
+  const prods = getProducts();
+  const search = (document.getElementById('customerSearch')?.value || '').trim().toLowerCase();
+  const filtered = search ? users.filter(u => u.name.toLowerCase().includes(search) || (u.phone || '').includes(search) || (u.email || '').includes(search)) : users;
 
-  const filtered = search ? users.filter(u => u.name.toLowerCase().includes(search) || u.phone.includes(search)) : users;
+  document.getElementById('customerTotal').textContent = filtered.length;
+  const tbody = document.getElementById('customerTableBody');
+  const empty = document.getElementById('customerEmpty');
 
-  document.getElementById('userTotal').textContent = filtered.length;
-  const tbody = document.getElementById('userTableBody');
-  const empty = document.getElementById('userEmpty');
-
-  if (filtered.length === 0) {
-    tbody.innerHTML = '';
-    empty.style.display = 'block';
-    return;
-  }
+  if (filtered.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
   empty.style.display = 'none';
 
-  tbody.innerHTML = filtered.map((u, i) => {
-    // 计算用户消费
+  tbody.innerHTML = filtered.map(u => {
     const userOrders = orders.filter(o => o.address?.phone === u.phone || o.address?.name === u.name);
     let totalSpent = 0;
-    userOrders.forEach(o => {
-      o.items.forEach(item => {
-        const p = prods.find(pr => pr.id === item.id);
-        if (p) totalSpent += p.price * item.qty;
-      });
-    });
-
+    userOrders.forEach(o => { o.items.forEach(item => { const p = prods.find(pr => pr.id === item.id); if (p) totalSpent += p.price * item.qty; }); });
     return `<tr>
-      <td>${i + 1}</td>
+      <td class="checkbox-cell"><input type="checkbox"></td>
       <td><strong>${u.name}</strong></td>
-      <td>${u.phone}</td>
-      <td>${u.email || '-'}</td>
+      <td>${u.phone || '-'}</td>
+      <td class="text-muted">${u.email || '-'}</td>
       <td>${userOrders.length}</td>
-      <td>¥${totalSpent.toFixed(2)}</td>
-      <td>
-        <button class="admin-btn-icon" title="查看详情" onclick="adminToast('用户详情功能开发中')">&#x1F4CB;</button>
+      <td class="fw-600">¥${totalSpent.toFixed(2)}</td>
+      <td class="text-muted text-sm">${u.registerTime || '-'}</td>
+      <td class="actions-cell"><button class="sb-btn-icon" onclick="adminToast('客户详情开发中')">📋</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function exportCustomers() { adminToast('客户数据导出成功', 'success'); }
+
+// ==================== 客户细分 ====================
+function renderSegments() {
+  const users = getUsers();
+  const orders = getOrders();
+  const segments = [
+    { name: '所有客户', desc: '全部注册客户', count: users.length, icon: '👥', color: '#008060' },
+    { name: '活跃客户', desc: '有订单记录的客户', count: orders.length > 0 ? Math.min(users.length, orders.length) : 0, icon: '🔥', color: '#d72c0d' },
+    { name: '新客户', desc: '最近30天注册', count: Math.floor(users.length * 0.3), icon: '✨', color: '#2c6ecb' },
+    { name: '回头客', desc: '多次下单客户', count: Math.floor(users.length * 0.15), icon: '💎', color: '#b98900' },
+    { name: '沉睡客户', desc: '超过60天未下单', count: Math.floor(users.length * 0.2), icon: '😴', color: '#8c9196' },
+    { name: 'VIP客户', desc: '消费超过¥1000', count: Math.floor(users.length * 0.1), icon: '👑', color: '#5c6ac4' },
+  ];
+
+  document.getElementById('segmentCards').innerHTML = segments.map(s => `
+    <div class="sb-card" style="cursor:pointer" onclick="adminToast('细分详情开发中')">
+      <div class="sb-card-body">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div style="width:40px;height:40px;border-radius:8px;background:${s.color}15;display:flex;align-items:center;justify-content:center;font-size:1.3rem">${s.icon}</div>
+          <div>
+            <div style="font-weight:600;font-size:.9rem">${s.name}</div>
+            <div class="text-muted text-sm">${s.desc}</div>
+          </div>
+        </div>
+        <div style="font-size:1.5rem;font-weight:700">${s.count}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ==================== 数据分析 ====================
+function renderAnalytics() {
+  const orders = getOrders();
+  const prods = getProducts();
+  let totalSales = 0;
+  orders.forEach(o => { o.items.forEach(item => { const p = prods.find(pr => pr.id === item.id); if (p) totalSales += p.price * item.qty; }); });
+
+  document.getElementById('anaTotalSales').textContent = '¥' + totalSales.toFixed(2);
+  document.getElementById('anaTotalOrders').textContent = orders.length;
+  document.getElementById('anaAvgOrder').textContent = orders.length > 0 ? '¥' + (totalSales / orders.length).toFixed(2) : '¥0';
+  document.getElementById('anaConversion').textContent = (Math.random() * 5 + 1).toFixed(1) + '%';
+
+  // 销售图表
+  const chart = document.getElementById('analyticsSalesChart');
+  const days = parseInt(document.getElementById('analyticsPeriod')?.value || '7');
+  const data = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    data.push({ label: (date.getMonth()+1) + '/' + date.getDate(), value: Math.random() * 1000 + 200 });
+  }
+  if (orders.length > 0) {
+    let todaySales = 0;
+    orders.forEach(o => { o.items.forEach(item => { const p = prods.find(pr => pr.id === item.id); if (p) todaySales += p.price * item.qty; }); });
+    data[data.length - 1].value = todaySales;
+  }
+  const maxVal = Math.max(...data.map(d => d.value), 1);
+  chart.innerHTML = data.map(d => `
+    <div class="bar-group"><div class="bar" style="height:${(d.value / maxVal) * 200}px" title="¥${d.value.toFixed(0)}"></div><div class="bar-label">${d.label}</div></div>
+  `).join('');
+
+  // 热销商品
+  const productSales = {};
+  orders.forEach(o => { o.items.forEach(item => { productSales[item.id] = (productSales[item.id] || 0) + item.qty; }); });
+  const topProducts = Object.entries(productSales).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const maxQty = topProducts.length > 0 ? topProducts[0][1] : 1;
+
+  document.getElementById('topProductsList').innerHTML = topProducts.length > 0
+    ? topProducts.map(([id, qty], i) => {
+        const p = prods.find(pr => pr.id === parseInt(id));
+        if (!p) return '';
+        return `<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--sb-border-light)">
+          <span class="text-muted fw-600">#${i + 1}</span>
+          <span style="font-size:1.2rem">${p.icon}</span>
+          <div style="flex:1">
+            <div style="font-size:.85rem;font-weight:500">${p.name}</div>
+            <div class="sb-progress mt-8" style="height:4px"><div class="sb-progress-bar" style="width:${(qty / maxQty) * 100}%"></div></div>
+          </div>
+          <span class="fw-600">${qty} 件</span>
+        </div>`;
+      }).join('')
+    : '<div class="text-muted text-sm" style="text-align:center;padding:20px">暂无销售数据</div>';
+
+  // 明细表
+  document.getElementById('analyticsDetailBody').innerHTML = data.slice(-7).reverse().map(d => {
+    const orderCount = Math.floor(Math.random() * 8) + 1;
+    const avg = d.value / orderCount;
+    const change = (Math.random() - 0.3) * 20;
+    return `<tr>
+      <td class="fw-600">${d.label}</td>
+      <td>${orderCount}</td>
+      <td class="fw-600">¥${d.value.toFixed(2)}</td>
+      <td>¥${avg.toFixed(2)}</td>
+      <td><span class="stat-change ${change >= 0 ? 'up' : 'down'}">${change >= 0 ? '↑' : '↓'} ${Math.abs(change).toFixed(1)}%</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ==================== 折扣管理 ====================
+let currentDiscountFilter = 'all';
+
+function filterDiscountTab(filter, btn) {
+  currentDiscountFilter = filter;
+  document.querySelectorAll('#page-discounts .sb-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderDiscountTable();
+}
+
+function renderDiscountTable() {
+  let discounts = getDiscounts();
+  if (discounts.length === 0) {
+    discounts = [
+      { id: 1, code: 'WELCOME10', type: 'percentage', value: 10, minOrder: 0, limit: 100, used: 23, startDate: '2024-01-01', endDate: '2025-12-31', status: 'active' },
+      { id: 2, code: 'SUMMER20', type: 'percentage', value: 20, minOrder: 200, limit: 50, used: 8, startDate: '2024-06-01', endDate: '2024-08-31', status: 'expired' },
+      { id: 3, code: 'FREESHIP', type: 'shipping', value: 0, minOrder: 99, limit: 0, used: 156, startDate: '2024-01-01', endDate: '2025-12-31', status: 'active' },
+    ];
+    saveDiscounts(discounts);
+  }
+
+  let filtered = [...discounts];
+  if (currentDiscountFilter !== 'all') filtered = filtered.filter(d => d.status === currentDiscountFilter);
+
+  document.getElementById('discountTableBody').innerHTML = filtered.map(d => {
+    const typeNames = { percentage: '百分比', fixed: '固定金额', shipping: '免运费' };
+    const valueText = d.type === 'percentage' ? d.value + '% 折扣' : (d.type === 'fixed' ? '¥' + d.value + ' 立减' : '免运费');
+    const statusBadge = d.status === 'active' ? 'sb-badge-success' : (d.status === 'scheduled' ? 'sb-badge-info' : 'sb-badge-default');
+    const statusText = d.status === 'active' ? '生效中' : (d.status === 'scheduled' ? '计划中' : '已过期');
+    return `<tr>
+      <td><span class="discount-code">${d.code}</span></td>
+      <td class="text-muted">${typeNames[d.type]}</td>
+      <td class="fw-600">${valueText}</td>
+      <td>${d.used}${d.limit > 0 ? ' / ' + d.limit : ''}</td>
+      <td><span class="sb-badge ${statusBadge}"><span class="sb-badge-dot"></span> ${statusText}</span></td>
+      <td class="actions-cell">
+        <button class="sb-btn-icon" onclick="adminToast('编辑折扣开发中')">✏️</button>
+        <button class="sb-btn-icon" onclick="deleteDiscount(${d.id})" style="color:var(--sb-danger)">🗑️</button>
       </td>
     </tr>`;
   }).join('');
+}
+
+function openDiscountModal() {
+  document.getElementById('editDiscountCode').value = '';
+  document.getElementById('editDiscountType').value = 'percentage';
+  document.getElementById('editDiscountValue').value = '';
+  document.getElementById('editDiscountMin').value = '';
+  document.getElementById('editDiscountLimit').value = '';
+  document.getElementById('editDiscountStart').value = new Date().toISOString().split('T')[0];
+  document.getElementById('editDiscountEnd').value = '';
+  document.getElementById('discountModal').classList.add('show');
+}
+
+function closeDiscountModal() { document.getElementById('discountModal').classList.remove('show'); }
+
+function generateDiscountCode() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < 8; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+  document.getElementById('editDiscountCode').value = code;
+}
+
+function saveDiscount() {
+  const code = document.getElementById('editDiscountCode').value.trim().toUpperCase();
+  if (!code) { adminToast('请输入折扣码', 'error'); return; }
+  const discounts = getDiscounts();
+  const newDiscount = {
+    id: discounts.length > 0 ? Math.max(...discounts.map(d => d.id)) + 1 : 1,
+    code,
+    type: document.getElementById('editDiscountType').value,
+    value: parseFloat(document.getElementById('editDiscountValue').value) || 0,
+    minOrder: parseFloat(document.getElementById('editDiscountMin').value) || 0,
+    limit: parseInt(document.getElementById('editDiscountLimit').value) || 0,
+    used: 0,
+    startDate: document.getElementById('editDiscountStart').value,
+    endDate: document.getElementById('editDiscountEnd').value,
+    status: 'active',
+  };
+  discounts.push(newDiscount);
+  saveDiscounts(discounts);
+  closeDiscountModal();
+  renderDiscountTable();
+  adminToast('折扣码已创建', 'success');
+}
+
+function deleteDiscount(id) {
+  if (!confirm('确定要删除此折扣码吗？')) return;
+  let discounts = getDiscounts().filter(d => d.id !== id);
+  saveDiscounts(discounts);
+  renderDiscountTable();
+  adminToast('折扣码已删除', 'success');
+}
+
+// ==================== 导航菜单 ====================
+function renderNavMenu() {
+  const menuItems = [
+    { name: '首页', url: 'store.html' },
+    { name: '全部商品', url: 'products.html' },
+    { name: '厨房用品', url: 'products.html?cat=kitchen' },
+    { name: '卧室家纺', url: 'products.html?cat=bedroom' },
+    { name: '卫浴用品', url: 'products.html?cat=bathroom' },
+    { name: '装饰摆件', url: 'products.html?cat=decor' },
+  ];
+  document.getElementById('navMenuItems').innerHTML = menuItems.map((item, i) => `
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--sb-bg);border-radius:8px;border:1px solid var(--sb-border)">
+      <span class="text-muted" style="cursor:grab">☰</span>
+      <span style="flex:1;font-weight:500">${item.name}</span>
+      <span class="text-muted text-sm">${item.url}</span>
+      <button class="sb-btn-icon" onclick="adminToast('编辑菜单开发中')" style="width:28px;height:28px">✏️</button>
+    </div>
+  `).join('');
+}
+
+// ==================== 全局搜索 ====================
+function handleGlobalSearch(event) {
+  if (event.key !== 'Enter') return;
+  const query = document.getElementById('globalSearch').value.trim();
+  if (!query) return;
+
+  const prods = getProducts();
+  const found = prods.filter(p => p.name.toLowerCase().includes(query.toLowerCase()));
+  if (found.length > 0) {
+    showPage('products', document.querySelector('[onclick*=products]'));
+    document.getElementById('productSearch').value = query;
+    renderProductTable();
+    adminToast(`找到 ${found.length} 个相关商品`);
+  } else {
+    adminToast('未找到相关结果');
+  }
 }
 
 // ==================== 初始化 ====================
