@@ -30,6 +30,10 @@
           <span class="nav-icon">📋</span><span class="nav-label">订单管理</span>
           <span class="nav-badge" id="orderBadge" style="display:none">0</span>
         </div>
+        <div class="nav-item" data-page="aftersales" onclick="nav(this)">
+          <span class="nav-icon">🔄</span><span class="nav-label">售后管理</span>
+          <span class="nav-badge" id="asBadge" style="display:none">0</span>
+        </div>
       </div>
       <div class="nav-section">
         <div class="nav-section-title">商品</div>
@@ -123,7 +127,7 @@
                 <div class="qa-card" onclick="nav(qs('[data-page=products]'));setTimeout(()=>openProductModal(),100)"><span class="qa-icon">➕</span><span class="qa-label">添加商品</span></div>
                 <div class="qa-card" onclick="nav(qs('[data-page=orders]'))"><span class="qa-icon">📦</span><span class="qa-label">处理订单</span></div>
                 <div class="qa-card" onclick="nav(qs('[data-page=discounts]'));setTimeout(()=>openDiscountModal(),100)"><span class="qa-icon">🎟️</span><span class="qa-label">创建折扣</span></div>
-                <div class="qa-card" onclick="nav(qs('[data-page=analytics]'))"><span class="qa-icon">📊</span><span class="qa-label">数据分析</span></div>
+                <div class="qa-card" onclick="nav(qs('[data-page=aftersales]'))"><span class="qa-icon">🔄</span><span class="qa-label">售后处理</span></div>
               </div>
             </div>
           </div>
@@ -174,6 +178,55 @@
             <div class="sb-empty" id="orderEmpty" style="display:none"><div class="sb-empty-icon">📋</div><div class="sb-empty-title">暂无订单</div><div class="sb-empty-desc">客户下单后订单将显示在这里</div></div>
           </div>
           <div class="sb-card-footer" id="orderFoot" style="display:none"><span class="sm muted" id="orderInfo"></span></div>
+        </div>
+      </div>
+
+      <!-- ===== 售后管理 ===== -->
+      <div id="pg-aftersales" style="display:none">
+        <div class="page-header"><h1>售后管理</h1>
+          <div class="page-header-actions">
+            <button class="sb-btn sb-btn-secondary" onclick="exportCSV('aftersales')">导出记录</button>
+          </div>
+        </div>
+        <div class="sb-warm-tip sb-warm-tip-info">
+          <span class="sb-warm-tip-icon">💡</span>
+          <div>每一位客户的反馈都值得认真对待。及时处理售后能大大提升回头客比例，也让你的店铺口碑更好。</div>
+        </div>
+        <div class="stats-row anim-in">
+          <div class="stat-card"><div class="stat-label">待处理</div><div class="stat-value" id="asPending">0</div><div class="stat-change" style="color:var(--sb-warning)">需要你的关注</div></div>
+          <div class="stat-card"><div class="stat-label">处理中</div><div class="stat-value" id="asProcessing">0</div><div class="stat-change muted">正在跟进</div></div>
+          <div class="stat-card"><div class="stat-label">已完成</div><div class="stat-value" id="asCompleted">0</div><div class="stat-change up">圆满解决</div></div>
+          <div class="stat-card"><div class="stat-label">满意度</div><div class="stat-value" id="asSatisfy">--</div><div class="stat-change muted">客户评价</div></div>
+        </div>
+        <div class="sb-card">
+          <div class="sb-tabs" id="asTabs">
+            <button class="sb-tab active" onclick="setAsFilter('all',this)">全部</button>
+            <button class="sb-tab" onclick="setAsFilter('待处理',this)">待处理</button>
+            <button class="sb-tab" onclick="setAsFilter('处理中',this)">处理中</button>
+            <button class="sb-tab" onclick="setAsFilter('已退款',this)">已退款</button>
+            <button class="sb-tab" onclick="setAsFilter('已完成',this)">已完成</button>
+            <button class="sb-tab" onclick="setAsFilter('已拒绝',this)">已拒绝</button>
+          </div>
+          <div class="sb-filters">
+            <div class="sb-filter-search"><input type="text" placeholder="搜索订单号、客户名..." id="asSearch" oninput="renderAftersales()"></div>
+            <select class="sb-select" style="width:auto;padding:5px 8px;font-size:.78rem" id="asType" onchange="renderAftersales()">
+              <option value="">全部类型</option>
+              <option value="refund">仅退款</option>
+              <option value="return">退货退款</option>
+              <option value="exchange">换货</option>
+            </select>
+          </div>
+          <div class="sb-card-body np" id="asListWrap">
+            <div class="sb-table-wrap"><table class="sb-table"><thead><tr>
+              <th>售后单号</th><th>关联订单</th><th>客户</th><th>类型</th><th>原因</th><th>金额</th><th>状态</th><th>申请时间</th><th class="act">操作</th>
+            </tr></thead><tbody id="asTbl"></tbody></table></div>
+            <div class="sb-empty-warm" id="asEmpty" style="display:none">
+              <div class="sb-empty-warm-illust">🎉</div>
+              <h3>暂时没有售后申请</h3>
+              <p>这说明你的商品质量很棒！继续保持，客户都很满意哦~</p>
+            </div>
+          </div>
+          <div class="sb-card-footer" id="asFoot" style="display:none"><span class="sm muted" id="asInfo"></span></div>
         </div>
       </div>
 
@@ -383,6 +436,19 @@
         <div class="sb-fg"><label>标签</label><input type="text" class="sb-input" id="eBadge" placeholder="热卖、新品、特惠"></div>
       </div>
       <div class="sb-fg"><label>特殊标记</label><div style="display:flex;gap:16px;margin-top:3px"><label class="sb-checkbox"><input type="checkbox" id="eFeatured"> 热销推荐</label><label class="sb-checkbox"><input type="checkbox" id="eIsNew"> 新品上市</label></div></div>
+      <hr class="sb-divider">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <h4 class="bold" style="font-size:.85rem">商品变体 <span class="muted" style="font-weight:400;font-size:.75rem">（如多颜色、多尺寸）</span></h4>
+        <label class="sb-checkbox"><input type="checkbox" id="eHasVariants" onchange="toggleVariantUI()"> 启用变体</label>
+      </div>
+      <div id="variantSection" style="display:none">
+        <div class="sb-warm-tip sb-warm-tip-info" style="margin-bottom:12px">
+          <span class="sb-warm-tip-icon">✨</span>
+          <div>添加变体后，客户可以根据自己的喜好选择颜色、尺寸等。每个变体可以设置独立的价格和库存。</div>
+        </div>
+        <div class="variant-list" id="variantList"></div>
+        <button class="add-variant-btn mt8" onclick="addVariantRow()">＋ 添加一个变体</button>
+      </div>
     </div>
     <div class="sb-modal-ft"><button class="sb-btn sb-btn-secondary" onclick="closeModal('prodModal')">取消</button><button class="sb-btn sb-btn-primary" onclick="saveProduct()">保存商品</button></div>
   </div>
@@ -491,6 +557,93 @@
   </div>
 </div>
 
+<!-- 发货物流 -->
+<div class="sb-overlay" id="shipModal">
+  <div class="sb-modal">
+    <div class="sb-modal-hd"><h3>发货 · 填写物流信息</h3><button class="sb-modal-x" onclick="closeModal('shipModal')">&times;</button></div>
+    <div class="sb-modal-bd">
+      <input type="hidden" id="shipOrderId">
+      <div class="sb-warm-tip sb-warm-tip-success">
+        <span class="sb-warm-tip-icon">📦</span>
+        <div>填写物流信息后，客户将收到发货通知。准确的物流信息能减少80%的"我的快递到哪了"咨询~</div>
+      </div>
+      <div class="sb-fg">
+        <label>选择快递公司</label>
+        <div class="ship-company-grid" id="shipCompanyGrid">
+          <div class="ship-co-item" onclick="selectShipCo(this,'顺丰速运')"><div class="co-icon">🟤</div>顺丰速运</div>
+          <div class="ship-co-item" onclick="selectShipCo(this,'中通快递')"><div class="co-icon">🔵</div>中通快递</div>
+          <div class="ship-co-item" onclick="selectShipCo(this,'圆通速递')"><div class="co-icon">🟡</div>圆通速递</div>
+          <div class="ship-co-item" onclick="selectShipCo(this,'韵达快递')"><div class="co-icon">🟠</div>韵达快递</div>
+          <div class="ship-co-item" onclick="selectShipCo(this,'申通快递')"><div class="co-icon">🔴</div>申通快递</div>
+          <div class="ship-co-item" onclick="selectShipCo(this,'极兔速递')"><div class="co-icon">🟢</div>极兔速递</div>
+        </div>
+        <input type="hidden" id="shipCompany">
+      </div>
+      <div class="sb-fg"><label>快递单号</label><input type="text" class="sb-input" id="shipTrackNo" placeholder="请输入快递单号"><div class="hint">输入后客户可以在订单页面实时追踪物流</div></div>
+      <div class="sb-fg"><label>备注（可选）</label><textarea class="sb-textarea" id="shipNote" rows="2" placeholder="如需要告知客户的注意事项..."></textarea></div>
+    </div>
+    <div class="sb-modal-ft">
+      <button class="sb-btn sb-btn-secondary" onclick="closeModal('shipModal')">取消</button>
+      <button class="sb-btn sb-btn-primary" onclick="confirmShip()">确认发货</button>
+    </div>
+  </div>
+</div>
+
+<!-- 物流追踪详情 -->
+<div class="sb-overlay" id="trackModal">
+  <div class="sb-modal">
+    <div class="sb-modal-hd"><h3 id="trackModalTitle">物流追踪</h3><button class="sb-modal-x" onclick="closeModal('trackModal')">&times;</button></div>
+    <div class="sb-modal-bd" id="trackModalBody"></div>
+    <div class="sb-modal-ft"><button class="sb-btn sb-btn-secondary" onclick="closeModal('trackModal')">关闭</button></div>
+  </div>
+</div>
+
+<!-- 售后处理 -->
+<div class="sb-overlay" id="asModal">
+  <div class="sb-modal sb-modal-lg">
+    <div class="sb-modal-hd"><h3 id="asModalTitle">售后详情</h3><button class="sb-modal-x" onclick="closeModal('asModal')">&times;</button></div>
+    <div class="sb-modal-bd" id="asModalBody"></div>
+    <div class="sb-modal-ft" id="asModalFt"></div>
+  </div>
+</div>
+
+<!-- 申请售后 -->
+<div class="sb-overlay" id="asApplyModal">
+  <div class="sb-modal">
+    <div class="sb-modal-hd"><h3>申请售后</h3><button class="sb-modal-x" onclick="closeModal('asApplyModal')">&times;</button></div>
+    <div class="sb-modal-bd">
+      <input type="hidden" id="asApplyOrderId">
+      <div class="sb-warm-tip sb-warm-tip-warn">
+        <span class="sb-warm-tip-icon">🤝</span>
+        <div>理解客户的需求，耐心沟通。好的售后体验能把一次投诉变成一个忠实客户。</div>
+      </div>
+      <div class="sb-fg"><label>售后类型</label>
+        <select class="sb-select" id="asApplyType" onchange="updateAsApplyUI()">
+          <option value="refund">仅退款 — 商品不退回</option>
+          <option value="return">退货退款 — 商品退回后退款</option>
+          <option value="exchange">换货 — 重新发一件新的</option>
+        </select>
+      </div>
+      <div class="sb-fg"><label>退款原因</label>
+        <div class="reason-tags" id="asReasonTags">
+          <span class="reason-tag" onclick="selectReason(this)">商品质量问题</span>
+          <span class="reason-tag" onclick="selectReason(this)">与描述不符</span>
+          <span class="reason-tag" onclick="selectReason(this)">尺寸/规格不对</span>
+          <span class="reason-tag" onclick="selectReason(this)">物流损坏</span>
+          <span class="reason-tag" onclick="selectReason(this)">不喜欢/不想要了</span>
+          <span class="reason-tag" onclick="selectReason(this)">发错货</span>
+        </div>
+      </div>
+      <div class="sb-fg"><label>退款金额 (¥)</label><input type="number" class="sb-input" id="asApplyAmount" placeholder="0.00" step="0.01" min="0"><div class="hint" id="asAmountHint">将退还至客户原支付渠道</div></div>
+      <div class="sb-fg"><label>详细说明（可选）</label><textarea class="sb-textarea" id="asApplyDesc" rows="2" placeholder="补充说明情况，帮助更好地处理..."></textarea></div>
+    </div>
+    <div class="sb-modal-ft">
+      <button class="sb-btn sb-btn-secondary" onclick="closeModal('asApplyModal')">取消</button>
+      <button class="sb-btn sb-btn-primary" onclick="submitAftersale()">提交售后申请</button>
+    </div>
+  </div>
+</div>
+
 <div class="sb-toast-wrap" id="toastWrap"></div>
 
 <script>
@@ -524,6 +677,7 @@ function toggleSidebar() {
 }
 
 function fmtDate(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function fmtDateTime(d) { return fmtDate(d)+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
 function fmtMoney(n) { return '¥' + n.toFixed(2); }
 
 // ===== 数据层 =====
@@ -595,7 +749,7 @@ function nav(el) {
   el.classList.add('active');
   $('adminSidebar').classList.remove('open');
   $('sidebarMask').classList.remove('show');
-  const r = {dashboard:renderDashboard,orders:renderOrders,products:renderProducts,inventory:renderInventory,collections:renderCollections,customers:renderCustomers,analytics:renderAnalytics,discounts:renderDiscounts,themes:renderThemes,pages:renderPages,settings:renderSettings};
+  const r = {dashboard:renderDashboard,orders:renderOrders,products:renderProducts,inventory:renderInventory,collections:renderCollections,customers:renderCustomers,analytics:renderAnalytics,discounts:renderDiscounts,themes:renderThemes,pages:renderPages,settings:renderSettings,aftersales:renderAftersales};
   if (r[page]) r[page]();
 }
 
@@ -718,8 +872,9 @@ function renderOrders() {
       <td class="bold">${fmtMoney(amt)}</td>
       <td><span class="sb-badge ${bc}">${o.status}</span></td>
       <td class="act">
-        ${o.status==='待支付'?`<button class="sb-btn sb-btn-sm sb-btn-primary" onclick="shipOrder('${o.id}')">发货</button>  <button class="sb-btn sb-btn-sm sb-btn-destructive" onclick="cancelOrder('${o.id}')">取消</button>`:''}
-        ${o.status==='已发货'?`<button class="sb-btn sb-btn-sm sb-btn-secondary" onclick="completeOrder('${o.id}')">确认完成</button>`:''}
+        ${o.status==='待支付'?`<button class="sb-btn sb-btn-sm sb-btn-primary" onclick="openShipModal('${o.id}')">发货</button>  <button class="sb-btn sb-btn-sm sb-btn-destructive" onclick="cancelOrder('${o.id}')">取消</button>`:''}
+        ${o.status==='已发货'?`<button class="sb-btn sb-btn-sm sb-btn-secondary" onclick="completeOrder('${o.id}')">确认完成</button> <button class="sb-btn sb-btn-sm sb-btn-secondary" onclick="viewTracking('${o.id}')">📍物流</button>`:''}
+        ${o.status==='已完成'?`<button class="sb-btn sb-btn-sm sb-btn-secondary" onclick="openAsApplyModal('${o.id}')">售后</button> <button class="sb-btn sb-btn-sm sb-btn-secondary" onclick="viewTracking('${o.id}')">📍物流</button>`:''}
         <button class="sb-btn-icon" onclick="viewOrder('${o.id}')" title="详情">📋</button>
       </td></tr>`;
   }).join('');
@@ -752,19 +907,26 @@ function viewOrder(id) {
       <div class="od-row"><span class="lbl">地址</span><span class="val">${o.address?.address||'-'}</span></div>
       ${o.address?.note?`<div class="od-row"><span class="lbl">备注</span><span class="val">${o.address.note}</span></div>`:''}
     </div></div>
-    <div class="sb-card"><div class="sb-card-header"><h2>支付信息</h2></div><div class="sb-card-body">
+    <div class="sb-card mb16"><div class="sb-card-header"><h2>支付信息</h2></div><div class="sb-card-body">
       <div class="od-row"><span class="lbl">支付方式</span><span class="val">${pay[o.payment]||o.payment||'-'}</span></div>
       <div class="od-row"><span class="lbl">订单金额</span><span class="val bold">${fmtMoney(amt)}</span></div>
     </div></div>
+    ${o.shipping && o.shipping.company ? `<div class="sb-card"><div class="sb-card-header"><h2>📦 物流信息</h2><button class="sb-btn sb-btn-plain" onclick="closeModal('orderModal');viewTracking('${o.id}')">追踪详情 →</button></div><div class="sb-card-body">
+      <div class="od-row"><span class="lbl">快递公司</span><span class="val">${o.shipping.company}</span></div>
+      <div class="od-row"><span class="lbl">快递单号</span><span class="val" style="font-family:monospace">${o.shipping.trackNo}</span></div>
+      <div class="od-row"><span class="lbl">发货时间</span><span class="val">${o.shipping.shipTime||'-'}</span></div>
+      ${o.shipping.note?`<div class="od-row"><span class="lbl">备注</span><span class="val">${o.shipping.note}</span></div>`:''}
+    </div></div>` : ''}
   </div></div>`;
   let ftHtml = '<button class="sb-btn sb-btn-secondary" onclick="closeModal(\'orderModal\')">关闭</button>';
-  if (o.status==='待支付') ftHtml += ` <button class="sb-btn sb-btn-primary" onclick="shipOrder('${o.id}');closeModal('orderModal')">标记发货</button>`;
-  if (o.status==='已发货') ftHtml += ` <button class="sb-btn sb-btn-primary" onclick="completeOrder('${o.id}');closeModal('orderModal')">确认完成</button>`;
+  if (o.status==='待支付') ftHtml += ` <button class="sb-btn sb-btn-primary" onclick="closeModal('orderModal');openShipModal('${o.id}')">📦 发货</button>`;
+  if (o.status==='已发货') ftHtml += ` <button class="sb-btn sb-btn-secondary" onclick="closeModal('orderModal');viewTracking('${o.id}')">📍 物流追踪</button> <button class="sb-btn sb-btn-primary" onclick="completeOrder('${o.id}');closeModal('orderModal')">确认完成</button>`;
+  if (o.status==='已完成') ftHtml += ` <button class="sb-btn sb-btn-secondary" onclick="closeModal('orderModal');openAsApplyModal('${o.id}')">🔄 售后</button>`;
   $('orderModalFt').innerHTML = ftHtml;
   openModal('orderModal');
 }
 
-function shipOrder(id) { const o=getO(); const x=o.find(a=>a.id===id); if(x){x.status='已发货';setO(o);renderOrders();toast('订单已发货','ok');} }
+function shipOrder(id) { const o=getO(); const x=o.find(a=>a.id===id); if(x){x.status='已发货';if(!x.shipping)x.shipping={};x.shipping.shipTime=fmtDateTime(new Date());setO(o);renderOrders();toast('订单已发货','ok');} }
 function completeOrder(id) { const o=getO(); const x=o.find(a=>a.id===id); if(x){x.status='已完成';setO(o);renderOrders();toast('订单已完成','ok');} }
 function cancelOrder(id) { if(!confirm('确定取消此订单？')) return; const o=getO(); const x=o.find(a=>a.id===id); if(x){x.status='已取消';setO(o);renderOrders();toast('订单已取消','ok');} }
 
@@ -796,7 +958,7 @@ function renderProducts() {
     const skb = p.stock<=10?'sb-badge-danger':p.stock<=30?'sb-badge-warning':'sb-badge-default';
     return `<tr><td class="ck"><input type="checkbox" onchange="updateBatchUI()"></td>
       <td style="font-size:1.2rem;width:36px">${p.icon||'📦'}</td>
-      <td><a href="javascript:void(0)" onclick="editProduct(${p.id})" style="font-weight:500">${p.name}</a>${p.badge?`<br><span class="muted xs">${p.badge}</span>`:''}</td>
+      <td><a href="javascript:void(0)" onclick="editProduct(${p.id})" style="font-weight:500">${p.name}</a>${p.variants&&p.variants.length?`<br><span class="muted xs">${p.variants.length}个变体</span>`:p.badge?`<br><span class="muted xs">${p.badge}</span>`:''}</td>
       <td><span class="sb-badge ${sb}"><span class="sb-dot ${st==='active'?'sb-dot-green':st==='draft'?'sb-dot-yellow':''}"></span> ${stxt}</span></td>
       <td><span class="sb-badge ${skb}">${p.stock}</span></td>
       <td class="muted">${CAT[p.category]||p.category}</td>
@@ -825,6 +987,14 @@ function openProductModal(p) {
   $('eIsNew').checked = p ? !!p.isNew : false;
   $('eStatus').value = p ? (p.status||'active') : 'active';
   $('eSku').value = p ? (p.sku||'') : '';
+  // Load variants
+  if (p && p.variants && p.variants.length) {
+    loadVariantsToUI(p.variants);
+  } else {
+    $('eHasVariants').checked = false;
+    $('variantSection').style.display = 'none';
+    $('variantList').innerHTML = '';
+  }
   openModal('prodModal');
 }
 
@@ -834,9 +1004,10 @@ function saveProduct() {
   if (isNaN(price)||price<=0) { toast('请输入有效价格','err'); return; }
   if (isNaN(stock)||stock<0) { toast('请输入有效库存','err'); return; }
   const prods=getP(), editId=$('eId').value, status=$('eStatus').value;
+  const variants = $('eHasVariants').checked ? getVariantsFromUI() : [];
   const data = {name, icon:$('eIcon').value||'📦', category:$('eCat').value, price, originalPrice:parseFloat($('eOrigPrice').value)||null,
     stock, description:$('eDesc').value, detail:$('eDetail').value, badge:$('eBadge').value,
-    featured:$('eFeatured').checked, isNew:$('eIsNew').checked, active:status!=='archived', status, sku:$('eSku').value};
+    featured:$('eFeatured').checked, isNew:$('eIsNew').checked, active:status!=='archived', status, sku:$('eSku').value, variants};
   if (editId) { const idx=prods.findIndex(p=>p.id===parseInt(editId)); if(idx>=0)Object.assign(prods[idx],data); toast('商品已更新','ok'); }
   else { data.id = prods.length>0 ? Math.max(...prods.map(p=>p.id))+1 : 1; prods.push(data); toast('商品已添加','ok'); }
   setP(prods); closeModal('prodModal'); renderProducts();
@@ -1216,6 +1387,13 @@ function exportCSV(type) {
     csv = '姓名,手机号,邮箱\n';
     users.forEach(u => { csv += `${u.name},${u.phone||''},${u.email||''}\n`; });
     filename = 'customers.csv';
+  } else if (type === 'aftersales') {
+    const asList = getAS();
+    if (!asList.length) { toast('暂无数据','err'); return; }
+    csv = '售后单号,关联订单,客户,类型,原因,金额,状态,申请时间\n';
+    const tn = {refund:'仅退款','return':'退货退款',exchange:'换货'};
+    asList.forEach(a => { csv += `${a.id},${a.orderId},${a.customer||''},${tn[a.type]||a.type},${a.reason||''},${(a.amount||0).toFixed(2)},${a.status},${a.createTime}\n`; });
+    filename = 'aftersales.csv';
   }
   const blob = new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8;'});
   const link = document.createElement('a');
@@ -1223,6 +1401,406 @@ function exportCSV(type) {
   link.download = filename;
   link.click();
   toast('导出成功','ok');
+}
+
+// ===== 物流发货 =====
+let selectedShipCo = '';
+function selectShipCo(el, name) {
+  qsa('.ship-co-item').forEach(x => x.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedShipCo = name;
+  $('shipCompany').value = name;
+}
+
+function openShipModal(orderId) {
+  $('shipOrderId').value = orderId;
+  $('shipTrackNo').value = '';
+  $('shipNote').value = '';
+  selectedShipCo = '';
+  qsa('.ship-co-item').forEach(x => x.classList.remove('selected'));
+  openModal('shipModal');
+}
+
+function confirmShip() {
+  const orderId = $('shipOrderId').value;
+  const trackNo = $('shipTrackNo').value.trim();
+  const company = selectedShipCo;
+  if (!company) { toast('请选择快递公司', 'err'); return; }
+  if (!trackNo) { toast('请输入快递单号', 'err'); return; }
+  const orders = getO();
+  const o = orders.find(x => x.id === orderId);
+  if (!o) return;
+  o.status = '已发货';
+  o.shipping = {
+    company, trackNo, note: $('shipNote').value.trim(),
+    shipTime: fmtDateTime(new Date()),
+    timeline: [
+      { time: fmtDateTime(new Date()), text: '商家已发货，' + company + '正在揽收', icon: '📦' },
+      { time: fmtDateTime(new Date(Date.now() - 60000)), text: '订单已打包完成，等待快递员取件', icon: '📋' },
+    ]
+  };
+  setO(orders);
+  closeModal('shipModal');
+  renderOrders();
+  toast('发货成功！客户将收到物流通知', 'ok');
+}
+
+function viewTracking(orderId) {
+  const o = getO().find(x => x.id === orderId);
+  if (!o) return;
+  const s = o.shipping || {};
+  $('trackModalTitle').textContent = '物流追踪 · ' + orderId;
+  if (!s.company) {
+    $('trackModalBody').innerHTML = '<div class="sb-empty-warm"><div class="sb-empty-warm-illust">📭</div><h3>暂无物流信息</h3><p>发货时填写物流单号，就能在这里追踪啦</p></div>';
+    openModal('trackModal');
+    return;
+  }
+  // Generate simulated tracking timeline
+  let tl = s.timeline || [];
+  if (o.status === '已完成' && tl.length <= 2) {
+    const now = new Date();
+    tl = [
+      { time: fmtDateTime(new Date(now - 3600000*0.5)), text: '签收成功！感谢你选择乐居生活 ❤️', icon: '✅' },
+      { time: fmtDateTime(new Date(now - 3600000*2)), text: '快递员正在派送中，请保持电话畅通', icon: '🚶' },
+      { time: fmtDateTime(new Date(now - 3600000*8)), text: '到达目的地城市，正在分拣', icon: '🏢' },
+      { time: fmtDateTime(new Date(now - 3600000*18)), text: '运输中，从发货城市发出', icon: '🚛' },
+      { time: fmtDateTime(new Date(now - 3600000*24)), text: '快递已揽收', icon: '📦' },
+    ];
+  } else if (tl.length <= 2) {
+    const now = new Date();
+    tl = [
+      { time: fmtDateTime(new Date(now - 3600000*1)), text: '运输中，预计1-3天到达', icon: '🚛' },
+      { time: fmtDateTime(new Date(now - 3600000*3)), text: '快递已从仓库发出', icon: '🏢' },
+      ...tl
+    ];
+  }
+  $('trackModalBody').innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--sb-bg);border-radius:var(--sb-radius);margin-bottom:16px">
+      <div style="font-size:1.6rem">🚚</div>
+      <div style="flex:1">
+        <div class="bold" style="font-size:.88rem">${s.company}</div>
+        <div class="muted sm">运单号：${s.trackNo}</div>
+      </div>
+      <button class="sb-btn sb-btn-sm sb-btn-secondary" onclick="navigator.clipboard.writeText('${s.trackNo}');toast('单号已复制','ok')">复制单号</button>
+    </div>
+    <div class="ship-timeline">
+      ${tl.map((item, i) => `
+        <div class="ship-tl-item">
+          <div class="ship-tl-dot">${item.icon || '📍'}</div>
+          <div class="ship-tl-body">
+            <div class="ship-tl-text">${item.text}</div>
+            <div class="ship-tl-time">${item.time}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    ${s.note ? `<div class="sb-warm-tip sb-warm-tip-info" style="margin-top:12px"><span class="sb-warm-tip-icon">📝</span><div>商家备注：${s.note}</div></div>` : ''}
+  `;
+  openModal('trackModal');
+}
+
+// ===== 售后管理 =====
+function getAS() { return JSON.parse(localStorage.getItem('leju_aftersales') || '[]'); }
+function setAS(d) { localStorage.setItem('leju_aftersales', JSON.stringify(d)); }
+
+let asFilter = 'all';
+function setAsFilter(f, btn) {
+  asFilter = f;
+  qsa('#asTabs .sb-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderAftersales();
+}
+
+function renderAftersales() {
+  const asList = getAS();
+  const search = ($('asSearch')?.value || '').trim().toLowerCase();
+  const typeF = $('asType')?.value || '';
+  let filtered = asFilter === 'all' ? [...asList] : asList.filter(a => a.status === asFilter);
+  if (search) filtered = filtered.filter(a => a.id.toLowerCase().includes(search) || a.orderId.toLowerCase().includes(search) || (a.customer || '').toLowerCase().includes(search));
+  if (typeF) filtered = filtered.filter(a => a.type === typeF);
+  filtered.sort((a, b) => new Date(b.createTime) - new Date(a.createTime));
+
+  // stats
+  const pending = asList.filter(a => a.status === '待处理').length;
+  const processing = asList.filter(a => a.status === '处理中').length;
+  const completed = asList.filter(a => a.status === '已完成' || a.status === '已退款').length;
+  $('asPending').textContent = pending;
+  $('asProcessing').textContent = processing;
+  $('asCompleted').textContent = completed;
+  $('asSatisfy').textContent = completed > 0 ? (85 + Math.floor(Math.random() * 13)) + '%' : '--';
+  const asBadge = $('asBadge');
+  if (asBadge) { asBadge.textContent = pending; asBadge.style.display = pending > 0 ? 'flex' : 'none'; }
+
+  if (!filtered.length) {
+    $('asTbl').innerHTML = '';
+    $('asEmpty').style.display = 'block';
+    $('asFoot').style.display = 'none';
+    return;
+  }
+  $('asEmpty').style.display = 'none';
+  $('asFoot').style.display = 'flex';
+  $('asInfo').textContent = '共 ' + filtered.length + ' 条售后记录';
+
+  const typeNames = { refund: '仅退款', 'return': '退货退款', exchange: '换货' };
+  const typeIcons = { refund: '💰', 'return': '📦', exchange: '🔄' };
+  $('asTbl').innerHTML = filtered.map(a => {
+    const bc = a.status === '已完成' || a.status === '已退款' ? 'sb-badge-success' : a.status === '处理中' ? 'sb-badge-info' : a.status === '已拒绝' ? 'sb-badge-danger' : 'sb-badge-warning';
+    return `<tr>
+      <td><a href="javascript:void(0)" onclick="viewAftersale('${a.id}')" class="bold">${a.id}</a></td>
+      <td class="muted sm">${a.orderId}</td>
+      <td>${a.customer || '-'}</td>
+      <td>${typeIcons[a.type] || '📋'} ${typeNames[a.type] || a.type}</td>
+      <td class="muted sm">${a.reason || '-'}</td>
+      <td class="bold">${fmtMoney(a.amount || 0)}</td>
+      <td><span class="sb-badge ${bc}">${a.status}</span></td>
+      <td class="muted sm">${a.createTime}</td>
+      <td class="act">
+        ${a.status === '待处理' ? `<button class="sb-btn sb-btn-sm sb-btn-primary" onclick="approveAftersale('${a.id}')">同意</button> <button class="sb-btn sb-btn-sm sb-btn-destructive" onclick="rejectAftersale('${a.id}')">拒绝</button>` : ''}
+        ${a.status === '处理中' ? `<button class="sb-btn sb-btn-sm sb-btn-primary" onclick="completeAftersale('${a.id}')">完成退款</button>` : ''}
+        <button class="sb-btn-icon" onclick="viewAftersale('${a.id}')" title="详情">📋</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openAsApplyModal(orderId) {
+  const o = getO().find(x => x.id === orderId);
+  if (!o) return;
+  $('asApplyOrderId').value = orderId;
+  $('asApplyAmount').value = calcOrderAmount(o).toFixed(2);
+  $('asAmountHint').textContent = '订单总额 ' + fmtMoney(calcOrderAmount(o)) + '，可部分退款';
+  $('asApplyType').value = 'refund';
+  $('asApplyDesc').value = '';
+  qsa('.reason-tag').forEach(t => t.classList.remove('selected'));
+  openModal('asApplyModal');
+}
+
+function selectReason(el) {
+  qsa('.reason-tag').forEach(t => t.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function updateAsApplyUI() {
+  const type = $('asApplyType').value;
+  const hints = { refund: '将退还至客户原支付渠道', 'return': '收到退货后退还款项', exchange: '换货无需退款金额' };
+  $('asAmountHint').textContent = hints[type] || '';
+}
+
+function submitAftersale() {
+  const orderId = $('asApplyOrderId').value;
+  const type = $('asApplyType').value;
+  const amount = parseFloat($('asApplyAmount').value) || 0;
+  const reason = qs('.reason-tag.selected')?.textContent || '其他原因';
+  const desc = $('asApplyDesc').value.trim();
+  const o = getO().find(x => x.id === orderId);
+  if (!o) return;
+  const asList = getAS();
+  const asId = 'AS' + Date.now().toString().slice(-8);
+  asList.push({
+    id: asId,
+    orderId,
+    customer: o.address?.name || '-',
+    phone: o.address?.phone || '',
+    type,
+    reason,
+    amount,
+    desc,
+    status: '待处理',
+    createTime: fmtDateTime(new Date()),
+    timeline: [{ time: fmtDateTime(new Date()), text: '售后申请已提交，等待商家审核', icon: '📋' }]
+  });
+  setAS(asList);
+  closeModal('asApplyModal');
+  toast('售后申请已提交，会尽快处理', 'ok');
+}
+
+function approveAftersale(id) {
+  const asList = getAS();
+  const a = asList.find(x => x.id === id);
+  if (!a) return;
+  a.status = '处理中';
+  a.timeline = a.timeline || [];
+  a.timeline.push({ time: fmtDateTime(new Date()), text: '商家已同意售后申请，正在处理中', icon: '✅' });
+  if (a.type === 'return') {
+    a.timeline.push({ time: fmtDateTime(new Date()), text: '请客户将商品寄回，收到后安排退款', icon: '📦' });
+  }
+  setAS(asList);
+  renderAftersales();
+  toast('已同意售后申请', 'ok');
+}
+
+function rejectAftersale(id) {
+  if (!confirm('确定拒绝此售后申请？请先与客户充分沟通。')) return;
+  const asList = getAS();
+  const a = asList.find(x => x.id === id);
+  if (!a) return;
+  a.status = '已拒绝';
+  a.timeline = a.timeline || [];
+  a.timeline.push({ time: fmtDateTime(new Date()), text: '售后申请已拒绝', icon: '❌' });
+  setAS(asList);
+  renderAftersales();
+  toast('已拒绝售后申请');
+}
+
+function completeAftersale(id) {
+  const asList = getAS();
+  const a = asList.find(x => x.id === id);
+  if (!a) return;
+  a.status = a.type === 'exchange' ? '已完成' : '已退款';
+  a.timeline = a.timeline || [];
+  const typeMsg = { refund: '退款已原路退回客户账户', 'return': '已收到退货，退款已打回客户账户', exchange: '换货商品已发出' };
+  a.timeline.push({ time: fmtDateTime(new Date()), text: typeMsg[a.type] || '售后已完成', icon: '🎉' });
+  a.completeTime = fmtDateTime(new Date());
+  setAS(asList);
+  renderAftersales();
+  toast(a.type === 'exchange' ? '换货已完成！' : '退款已完成！金额将退回客户账户', 'ok');
+}
+
+function viewAftersale(id) {
+  const a = getAS().find(x => x.id === id);
+  if (!a) return;
+  const typeNames = { refund: '仅退款', 'return': '退货退款', exchange: '换货' };
+  const bc = a.status === '已完成' || a.status === '已退款' ? 'sb-badge-success' : a.status === '处理中' ? 'sb-badge-info' : a.status === '已拒绝' ? 'sb-badge-danger' : 'sb-badge-warning';
+
+  // Build steps
+  const steps = ['提交申请', '商家审核', a.type === 'return' ? '退回商品' : '处理中', a.type === 'exchange' ? '换货完成' : '退款完成'];
+  let activeStep = 0;
+  if (a.status === '处理中') activeStep = 2;
+  else if (a.status === '已退款' || a.status === '已完成') activeStep = 4;
+  else if (a.status === '已拒绝') activeStep = 1;
+  else activeStep = 1;
+
+  const stepsHtml = steps.map((s, i) => {
+    const cls = i < activeStep ? 'done' : i === activeStep ? 'active' : '';
+    const icon = i < activeStep ? '✓' : (i + 1);
+    return `<div class="as-step ${cls}"><div class="as-step-dot">${icon}</div><div class="as-step-label">${s}</div></div>`;
+  }).join('');
+
+  const tl = (a.timeline || []).slice().reverse();
+  $('asModalTitle').textContent = '售后详情 · ' + a.id;
+  $('asModalBody').innerHTML = `
+    <div class="as-steps">${stepsHtml}</div>
+    <div class="od-grid">
+      <div>
+        <div class="sb-card mb16">
+          <div class="sb-card-header"><h2>售后信息</h2><span class="sb-badge ${bc}">${a.status}</span></div>
+          <div class="sb-card-body">
+            <div class="od-row"><span class="lbl">售后类型</span><span class="val">${typeNames[a.type] || a.type}</span></div>
+            <div class="od-row"><span class="lbl">退款原因</span><span class="val">${a.reason || '-'}</span></div>
+            <div class="od-row"><span class="lbl">退款金额</span><span class="val bold danger">${fmtMoney(a.amount || 0)}</span></div>
+            ${a.desc ? `<div class="od-row"><span class="lbl">详细说明</span><span class="val">${a.desc}</span></div>` : ''}
+            <div class="od-row"><span class="lbl">关联订单</span><span class="val"><a href="javascript:void(0)" onclick="closeModal('asModal');viewOrder('${a.orderId}')">${a.orderId}</a></span></div>
+          </div>
+        </div>
+        <div class="sb-card">
+          <div class="sb-card-header"><h2>处理记录</h2></div>
+          <div class="sb-card-body">
+            <div class="ship-timeline">${tl.map(t => `
+              <div class="ship-tl-item">
+                <div class="ship-tl-dot">${t.icon || '📍'}</div>
+                <div class="ship-tl-body"><div class="ship-tl-text">${t.text}</div><div class="ship-tl-time">${t.time}</div></div>
+              </div>
+            `).join('')}</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="sb-card mb16">
+          <div class="sb-card-header"><h2>客户信息</h2></div>
+          <div class="sb-card-body">
+            <div class="od-row"><span class="lbl">客户</span><span class="val">${a.customer || '-'}</span></div>
+            <div class="od-row"><span class="lbl">电话</span><span class="val">${a.phone || '-'}</span></div>
+            <div class="od-row"><span class="lbl">申请时间</span><span class="val">${a.createTime}</span></div>
+            ${a.completeTime ? `<div class="od-row"><span class="lbl">完成时间</span><span class="val">${a.completeTime}</span></div>` : ''}
+          </div>
+        </div>
+        ${a.status === '待处理' ? `
+        <div class="sb-warm-tip sb-warm-tip-warn">
+          <span class="sb-warm-tip-icon">⏰</span>
+          <div>建议24小时内处理，及时响应能提升客户满意度。先联系客户了解情况，再做决定。</div>
+        </div>` : ''}
+        ${a.status === '已退款' || a.status === '已完成' ? `
+        <div class="sb-warm-tip sb-warm-tip-success">
+          <span class="sb-warm-tip-icon">🎉</span>
+          <div>售后已圆满解决！好的售后体验是最好的口碑。</div>
+        </div>` : ''}
+      </div>
+    </div>
+  `;
+  let ft = '<button class="sb-btn sb-btn-secondary" onclick="closeModal(\'asModal\')">关闭</button>';
+  if (a.status === '待处理') ft += ` <button class="sb-btn sb-btn-destructive" onclick="rejectAftersale('${a.id}');closeModal('asModal')">拒绝</button> <button class="sb-btn sb-btn-primary" onclick="approveAftersale('${a.id}');closeModal('asModal')">同意处理</button>`;
+  if (a.status === '处理中') ft += ` <button class="sb-btn sb-btn-primary" onclick="completeAftersale('${a.id}');closeModal('asModal')">完成${a.type === 'exchange' ? '换货' : '退款'}</button>`;
+  $('asModalFt').innerHTML = ft;
+  openModal('asModal');
+}
+
+// ===== 商品变体 =====
+let variantCounter = 0;
+function toggleVariantUI() {
+  const show = $('eHasVariants').checked;
+  $('variantSection').style.display = show ? 'block' : 'none';
+  if (show && $('variantList').children.length === 0) addVariantRow();
+}
+
+function addVariantRow() {
+  variantCounter++;
+  const div = document.createElement('div');
+  div.className = 'variant-row';
+  div.id = 'vr-' + variantCounter;
+  div.innerHTML = `
+    <select style="width:80px" onchange="this.nextElementSibling.placeholder=this.value==='color'?'如：白色':'如：L'">
+      <option value="color">颜色</option>
+      <option value="size">尺寸</option>
+      <option value="material">材质</option>
+      <option value="style">款式</option>
+    </select>
+    <input type="text" placeholder="如：白色" style="flex:1;min-width:80px">
+    <input type="number" placeholder="价格" style="width:70px" min="0" step="0.01">
+    <input type="number" placeholder="库存" style="width:60px" min="0">
+    <button class="variant-remove" onclick="this.parentElement.remove()" title="移除">✕</button>
+  `;
+  $('variantList').appendChild(div);
+}
+
+function getVariantsFromUI() {
+  const rows = qsa('.variant-row');
+  const variants = [];
+  rows.forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const select = row.querySelector('select');
+    const type = select?.value || 'color';
+    const value = inputs[0]?.value.trim();
+    const price = parseFloat(inputs[1]?.value) || 0;
+    const stock = parseInt(inputs[2]?.value) || 0;
+    if (value) variants.push({ type, value, price, stock });
+  });
+  return variants;
+}
+
+function loadVariantsToUI(variants) {
+  $('variantList').innerHTML = '';
+  if (!variants || !variants.length) return;
+  $('eHasVariants').checked = true;
+  $('variantSection').style.display = 'block';
+  variants.forEach(v => {
+    variantCounter++;
+    const div = document.createElement('div');
+    div.className = 'variant-row';
+    div.id = 'vr-' + variantCounter;
+    div.innerHTML = `
+      <select style="width:80px" onchange="this.nextElementSibling.placeholder=this.value==='color'?'如：白色':'如：L'">
+        <option value="color" ${v.type === 'color' ? 'selected' : ''}>颜色</option>
+        <option value="size" ${v.type === 'size' ? 'selected' : ''}>尺寸</option>
+        <option value="material" ${v.type === 'material' ? 'selected' : ''}>材质</option>
+        <option value="style" ${v.type === 'style' ? 'selected' : ''}>款式</option>
+      </select>
+      <input type="text" placeholder="如：白色" style="flex:1;min-width:80px" value="${v.value}">
+      <input type="number" placeholder="价格" style="width:70px" min="0" step="0.01" value="${v.price || ''}">
+      <input type="number" placeholder="库存" style="width:60px" min="0" value="${v.stock || ''}">
+      <button class="variant-remove" onclick="this.parentElement.remove()" title="移除">✕</button>
+    `;
+    $('variantList').appendChild(div);
+  });
 }
 
 // ===== 初始化 =====

@@ -697,3 +697,403 @@ hr.sb-divider { border: none; border-top: 1px solid var(--sb-border-light); marg
   .admin-sidebar, .admin-topbar { display: none !important; }
   .admin-main { margin-left: 0 !important; }
 }
+
+/* ========== 人性化动效 ========== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes pulse-soft {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes check-bounce {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.anim-in { animation: fadeInUp .35s ease both; }
+.anim-in-delay1 { animation: fadeInUp .35s ease .06s both; }
+.anim-in-delay2 { animation: fadeInUp .35s ease .12s both; }
+.anim-in-delay3 { animation: fadeInUp .35s ease .18s both; }
+
+/* ========== 温暖提示条 ========== */
+.sb-warm-tip {
+  padding: 14px 18px;
+  border-radius: var(--sb-radius);
+  font-size: .82rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 14px;
+  line-height: 1.6;
+  animation: fadeInUp .4s ease both;
+}
+.sb-warm-tip-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: -2px; }
+.sb-warm-tip-info {
+  background: linear-gradient(135deg, #f0f4ff, #e8eeff);
+  color: #3d5a99;
+  border: 1px solid #d0daf0;
+}
+.sb-warm-tip-success {
+  background: linear-gradient(135deg, #f0faf5, #e5f7ee);
+  color: #1a6b45;
+  border: 1px solid #b8e4ce;
+}
+.sb-warm-tip-warn {
+  background: linear-gradient(135deg, #fffbf0, #fff5e0);
+  color: #8a6d20;
+  border: 1px solid #ead9a0;
+}
+
+/* ========== 人性化空状态 ========== */
+.sb-empty-warm {
+  text-align: center;
+  padding: 60px 20px;
+  animation: fadeIn .5s ease;
+}
+.sb-empty-warm-illust {
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+  animation: pulse-soft 2.5s ease-in-out infinite;
+}
+.sb-empty-warm h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--sb-text);
+}
+.sb-empty-warm p {
+  font-size: .82rem;
+  color: var(--sb-text-muted);
+  margin-bottom: 20px;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+/* ========== 售后状态步骤条 ========== */
+.as-steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 16px 0;
+  padding: 0 10px;
+}
+.as-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+.as-step::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: -50%;
+  right: 50%;
+  height: 2px;
+  background: var(--sb-border);
+  z-index: 0;
+}
+.as-step:first-child::before { display: none; }
+.as-step.done::before { background: var(--sb-accent); }
+.as-step.active::before {
+  background: linear-gradient(90deg, var(--sb-accent), var(--sb-border));
+}
+.as-step-dot {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .75rem;
+  z-index: 1;
+  background: #fff;
+  border: 2px solid var(--sb-border);
+  color: var(--sb-text-muted);
+  transition: all .3s ease;
+}
+.as-step.done .as-step-dot {
+  background: var(--sb-accent);
+  border-color: var(--sb-accent);
+  color: #fff;
+  animation: check-bounce .4s ease;
+}
+.as-step.active .as-step-dot {
+  border-color: var(--sb-accent);
+  color: var(--sb-accent);
+  box-shadow: 0 0 0 4px rgba(184,150,90,.15);
+}
+.as-step-label {
+  font-size: .7rem;
+  color: var(--sb-text-muted);
+  margin-top: 6px;
+  white-space: nowrap;
+}
+.as-step.done .as-step-label,
+.as-step.active .as-step-label { color: var(--sb-text); font-weight: 500; }
+
+/* ========== 物流追踪时间线 ========== */
+.ship-timeline { padding: 4px 0; }
+.ship-tl-item {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  position: relative;
+  animation: slideInRight .3s ease both;
+}
+.ship-tl-item:nth-child(1) { animation-delay: 0s; }
+.ship-tl-item:nth-child(2) { animation-delay: .06s; }
+.ship-tl-item:nth-child(3) { animation-delay: .12s; }
+.ship-tl-item:nth-child(4) { animation-delay: .18s; }
+.ship-tl-item:nth-child(5) { animation-delay: .24s; }
+.ship-tl-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 34px;
+  bottom: -4px;
+  width: 2px;
+  background: var(--sb-border-light);
+}
+.ship-tl-item:first-child .ship-tl-dot {
+  background: var(--sb-accent);
+  border-color: var(--sb-accent);
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(184,150,90,.12);
+}
+.ship-tl-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--sb-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .6rem;
+  flex-shrink: 0;
+  background: #fff;
+  transition: all .3s ease;
+}
+.ship-tl-body { flex: 1; }
+.ship-tl-text { font-size: .82rem; line-height: 1.5; }
+.ship-tl-time { font-size: .72rem; color: var(--sb-text-muted); margin-top: 2px; }
+.ship-tl-item:first-child .ship-tl-text { font-weight: 600; color: var(--sb-text); }
+
+/* ========== 商品变体 ========== */
+.variant-list { display: flex; flex-direction: column; gap: 8px; }
+.variant-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--sb-bg);
+  border: 1px solid var(--sb-border-light);
+  border-radius: var(--sb-radius);
+  animation: fadeInUp .3s ease both;
+  transition: border-color .2s, box-shadow .2s;
+}
+.variant-row:hover {
+  border-color: var(--sb-accent);
+  box-shadow: 0 0 0 2px rgba(184,150,90,.08);
+}
+.variant-row input, .variant-row select {
+  padding: 5px 8px;
+  border: 1px solid var(--sb-border);
+  border-radius: var(--sb-radius);
+  font-size: .78rem;
+  outline: none;
+  background: #fff;
+  transition: border-color .2s;
+}
+.variant-row input:focus, .variant-row select:focus {
+  border-color: var(--sb-accent);
+}
+.variant-remove {
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: none;
+  color: var(--sb-text-muted);
+  font-size: .85rem;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .2s;
+  flex-shrink: 0;
+}
+.variant-remove:hover {
+  background: var(--sb-danger-bg);
+  color: var(--sb-danger);
+}
+
+.add-variant-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  border: 2px dashed var(--sb-border);
+  border-radius: var(--sb-radius);
+  background: none;
+  color: var(--sb-text-muted);
+  font-size: .82rem;
+  cursor: pointer;
+  transition: all .25s ease;
+  width: 100%;
+}
+.add-variant-btn:hover {
+  border-color: var(--sb-accent);
+  color: var(--sb-accent);
+  background: var(--sb-accent-light);
+}
+
+/* ========== 售后卡片 ========== */
+.as-card {
+  background: var(--sb-card);
+  border: 1px solid var(--sb-border);
+  border-radius: var(--sb-radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: all .25s ease;
+  animation: fadeInUp .35s ease both;
+  cursor: pointer;
+}
+.as-card:hover {
+  border-color: var(--sb-accent);
+  box-shadow: var(--sb-shadow-md);
+  transform: translateY(-1px);
+}
+.as-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.as-card-id { font-weight: 600; font-size: .85rem; }
+.as-card-body {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.as-card-icon {
+  width: 44px;
+  height: 44px;
+  background: var(--sb-bg);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.as-card-info { flex: 1; }
+.as-card-name { font-size: .82rem; font-weight: 500; margin-bottom: 2px; }
+.as-card-meta { font-size: .72rem; color: var(--sb-text-muted); }
+.as-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--sb-border-light);
+}
+
+/* ========== 快递公司选择 ========== */
+.ship-company-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.ship-co-item {
+  padding: 10px;
+  border: 1px solid var(--sb-border);
+  border-radius: var(--sb-radius);
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s ease;
+  font-size: .78rem;
+}
+.ship-co-item:hover { border-color: var(--sb-accent); background: var(--sb-accent-light); }
+.ship-co-item.selected {
+  border-color: var(--sb-accent);
+  background: var(--sb-accent-light);
+  box-shadow: 0 0 0 2px rgba(184,150,90,.15);
+  font-weight: 600;
+}
+.ship-co-item .co-icon { font-size: 1.2rem; margin-bottom: 4px; }
+
+/* ========== 撤销 Toast ========== */
+.sb-toast-undo {
+  background: #1a1a1a;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: var(--sb-radius);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: .82rem;
+  box-shadow: var(--sb-shadow-lg);
+  border-left: 3px solid var(--sb-accent);
+}
+.sb-toast-undo .undo-btn {
+  background: rgba(255,255,255,.15);
+  border: none;
+  color: var(--sb-accent);
+  padding: 4px 12px;
+  border-radius: var(--sb-radius);
+  font-size: .78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s;
+}
+.sb-toast-undo .undo-btn:hover { background: rgba(255,255,255,.25); }
+
+/* ========== 售后理由标签 ========== */
+.reason-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.reason-tag {
+  padding: 5px 12px;
+  border: 1px solid var(--sb-border);
+  border-radius: 16px;
+  font-size: .78rem;
+  cursor: pointer;
+  transition: all .2s ease;
+  background: #fff;
+  user-select: none;
+}
+.reason-tag:hover { border-color: var(--sb-accent); }
+.reason-tag.selected {
+  background: var(--sb-accent);
+  color: #fff;
+  border-color: var(--sb-accent);
+}
+
+/* ========== 响应式补充 ========== */
+@media (max-width: 768px) {
+  .as-steps { overflow-x: auto; padding-bottom: 8px; }
+  .ship-company-grid { grid-template-columns: repeat(2, 1fr); }
+  .variant-row { flex-wrap: wrap; }
+}
+@media (max-width: 480px) {
+  .ship-company-grid { grid-template-columns: 1fr 1fr; }
+}
