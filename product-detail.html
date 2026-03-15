@@ -24,7 +24,9 @@
 </header>
 
 <div class="container">
+  <div class="detail-breadcrumb" id="breadcrumb"></div>
   <div class="product-detail" id="productDetail"></div>
+  <div id="productDetailBelow"></div>
 </div>
 
 <footer class="site-footer">
@@ -49,43 +51,266 @@
     const name = getProductName(product);
     const desc = getProductDesc(product);
     const detail = getProductDetail(product);
+    const rich = getProductRichInfo(product.id);
     document.title = name + ' - LeJu Living';
 
+    // Breadcrumb
+    document.getElementById('breadcrumb').innerHTML = `<a href="store.html">首页</a><span>›</span><a href="products.html?cat=${product.category}">${getCategoryName(product.category)}</a><span>›</span>${name}`;
+
+    // Price savings
+    const hasSale = product.originalPrice && product.originalPrice > product.price;
+    const saveAmt = hasSale ? (product.originalPrice - product.price).toFixed(0) : 0;
+    const savePct = hasSale ? Math.round((1 - product.price / product.originalPrice) * 100) : 0;
+
+    // Variant chips HTML
+    let variantHtml = '';
+    if (rich.variants && rich.variants.length) {
+      variantHtml = rich.variants.map(v => `
+        <div class="detail-option-section">
+          <div class="detail-option-label">${v.label}：<span id="selected_${v.type}" style="color:var(--accent);font-weight:400">${v.options[0]}</span></div>
+          <div class="detail-option-chips">
+            ${v.options.map((opt, i) => `<div class="detail-chip${i === 0 ? ' selected' : ''}" onclick="selectVariant(this, '${v.type}')">${opt}</div>`).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Tags
+    const tags = [];
+    if (product.featured) tags.push('<span class="detail-tag detail-tag-hot">人气之选</span>');
+    if (product.isNew) tags.push('<span class="detail-tag detail-tag-new">新品上市</span>');
+    if (hasSale) tags.push('<span class="detail-tag detail-tag-sale">限时特惠</span>');
+    tags.push('<span class="detail-tag detail-tag-free">满99包邮</span>');
+
+    // Stock text
+    let stockText = '';
+    if (product.stock > 100) stockText = '<span style="color:#2d6a4f">现货充足，48小时内发货</span>';
+    else if (product.stock > 20) stockText = `<span style="color:#2d6a4f">有货（剩余${product.stock}件）</span>`;
+    else if (product.stock > 0) stockText = `<span style="color:#d72c0d">仅剩${product.stock}件，抓紧入手</span>`;
+    else stockText = '<span style="color:#d72c0d">暂时缺货，可预约到货提醒</span>';
+
+    // Main product area
     document.getElementById('productDetail').innerHTML = `
-      <div class="detail-gallery">${product.icon}</div>
-      <div class="detail-info">
+      <div class="detail-gallery-wrap">
+        <div class="detail-gallery-main" id="mainGallery">
+          ${product.badge ? `<div class="detail-gallery-badge">${product.badge}</div>` : ''}
+          ${product.icon}
+        </div>
+        <div class="detail-gallery-thumbs">
+          <div class="detail-gallery-thumb active" onclick="switchGallery(this, '${product.icon}')">${product.icon}</div>
+          <div class="detail-gallery-thumb" onclick="switchGallery(this, '${product.icon}')" style="font-size:1.2rem;color:var(--text-muted)">📐<br><span style="font-size:.6rem">尺寸图</span></div>
+          <div class="detail-gallery-thumb" onclick="switchGallery(this, '${product.icon}')" style="font-size:1.2rem;color:var(--text-muted)">📦<br><span style="font-size:.6rem">包装</span></div>
+          <div class="detail-gallery-thumb" onclick="switchGallery(this, '${product.icon}')" style="font-size:1.2rem;color:var(--text-muted)">🔍<br><span style="font-size:.6rem">细节</span></div>
+        </div>
+      </div>
+      <div class="detail-info detail-top-info">
+        <div class="detail-tag-row">${tags.join('')}</div>
         <h1>${name}</h1>
-        <div class="price">${formatPrice(product.price)}
-          ${product.originalPrice ? `<span style="font-size:1rem;color:#999;text-decoration:line-through;margin-left:12px">${formatPrice(product.originalPrice)}</span>` : ''}
+        ${rich.subtitle ? `<p style="color:var(--text-light);font-size:.92rem;margin:-8px 0 16px;letter-spacing:.5px">${rich.subtitle}</p>` : ''}
+
+        <div class="detail-price-block">
+          <div class="detail-price-row">
+            <span class="detail-price-now">${formatPrice(product.price)}</span>
+            ${hasSale ? `<span class="detail-price-was">${formatPrice(product.originalPrice)}</span>` : ''}
+            ${hasSale ? `<span class="detail-price-save">省 ¥${saveAmt}（${savePct}% OFF）</span>` : ''}
+          </div>
+          <div class="detail-price-note">${hasSale ? '活动价格，随时可能恢复原价' : '品质之选，物超所值'}</div>
         </div>
-        <div class="meta">
-          <div>${t('category_label')}：${getCategoryName(product.category)}</div>
-          <div>${t('stock_label')}：${product.stock > 0 ? t('in_stock') : t('out_of_stock')}</div>
-          <div>${t('shipping_label')}：${t('free_shipping_note')}</div>
+
+        ${hasSale && product.price < 99 ? `<div class="detail-promo-bar">🎁 再凑 <strong>¥${(99 - product.price).toFixed(0)}</strong> 即可享受 <strong>全场包邮</strong>，去看看其他好物 → <a href="products.html" style="color:#6d4c00;text-decoration:underline">凑单专区</a></div>` : ''}
+
+        <div class="detail-short-desc">${desc}</div>
+
+        ${variantHtml}
+
+        <div class="detail-option-section">
+          <div class="detail-option-label">库存状态</div>
+          <div style="font-size:.88rem">${stockText}</div>
         </div>
-        <p style="margin-bottom:24px;line-height:1.8;color:var(--text-light)">${desc}</p>
+
         <div class="quantity-selector">
           <button onclick="changeQty(-1)">-</button>
           <input type="number" id="qtyInput" value="1" min="1" max="${product.stock}" onchange="validateQty()">
           <button onclick="changeQty(1)">+</button>
         </div>
         <div class="detail-actions">
-          <button class="btn btn-primary" onclick="addToCart(${product.id}, getQty())">${t('add_to_cart')}</button>
-          <button class="btn btn-outline" style="border-color:var(--primary);color:var(--primary)" onclick="addToCart(${product.id}, getQty()); location.href='cart.html'">${t('buy_now')}</button>
+          <button class="btn btn-primary" onclick="addToCart(${product.id}, getQty())" ${product.stock <= 0 ? 'disabled style="opacity:.5;cursor:not-allowed"' : ''}>${product.stock > 0 ? t('add_to_cart') : '暂时缺货'}</button>
+          <button class="btn btn-outline" style="border-color:var(--primary);color:var(--primary)" onclick="addToCart(${product.id}, getQty()); location.href='cart.html'" ${product.stock <= 0 ? 'disabled style="opacity:.5;cursor:not-allowed"' : ''}>${t('buy_now')}</button>
         </div>
-        <div class="detail-tabs">
-          <div class="tab-headers">
-            <button class="active" onclick="switchTab(this, 'tab-desc')">${t('tab_detail')}</button>
-            <button onclick="switchTab(this, 'tab-spec')">${t('tab_spec')}</button>
-            <button onclick="switchTab(this, 'tab-review')">${t('tab_review')}</button>
-          </div>
-          <div class="tab-content" id="tab-desc"><p>${detail || t('no_detail')}</p></div>
-          <div class="tab-content" id="tab-spec" style="display:none"><p>${t('spec_default').replace(/\n/g, '<br>')}</p></div>
-          <div class="tab-content" id="tab-review" style="display:none"><p>${t('no_review')}</p></div>
+
+        <div class="detail-trust">
+          <div class="detail-trust-item"><div class="detail-trust-icon">✅</div><div class="detail-trust-text">正品保证<br>假一赔十</div></div>
+          <div class="detail-trust-item"><div class="detail-trust-icon">🚚</div><div class="detail-trust-text">满99包邮<br>48h发货</div></div>
+          <div class="detail-trust-item"><div class="detail-trust-icon">🔄</div><div class="detail-trust-text">7天无理由<br>退换货</div></div>
+          <div class="detail-trust-item"><div class="detail-trust-icon">🛡️</div><div class="detail-trust-text">一年质保<br>售后无忧</div></div>
         </div>
       </div>`;
+
+    // Below-the-fold: detailed tabs
+    const reviewsHtml = buildReviewsHtml(rich);
+    const specsHtml = buildSpecsHtml(rich, product);
+    const storyHtml = buildStoryHtml(rich);
+    const careHtml = buildCareHtml(rich);
+    const faqHtml = buildFaqHtml(rich);
+
+    document.getElementById('productDetailBelow').innerHTML = `
+      <div class="detail-tabs-v2">
+        <div class="tab-headers-v2">
+          <button class="tab-btn active" onclick="switchTabV2(this, 'panel-detail')">商品详情</button>
+          <button class="tab-btn" onclick="switchTabV2(this, 'panel-spec')">规格参数</button>
+          <button class="tab-btn" onclick="switchTabV2(this, 'panel-care')">使用指南</button>
+          <button class="tab-btn" onclick="switchTabV2(this, 'panel-faq')">常见问题</button>
+          <button class="tab-btn" onclick="switchTabV2(this, 'panel-review')">用户评价（${rich.reviews ? rich.reviews.length : 0}）</button>
+        </div>
+        <div class="detail-tab-panel active" id="panel-detail">
+          <p style="font-size:.95rem;line-height:2;color:var(--text-light);margin-bottom:32px">${detail || desc}</p>
+          ${storyHtml}
+        </div>
+        <div class="detail-tab-panel" id="panel-spec">
+          ${specsHtml}
+        </div>
+        <div class="detail-tab-panel" id="panel-care">
+          ${careHtml}
+        </div>
+        <div class="detail-tab-panel" id="panel-faq">
+          ${faqHtml}
+        </div>
+        <div class="detail-tab-panel" id="panel-review">
+          ${reviewsHtml}
+        </div>
+      </div>
+
+      <div class="detail-recommend" id="recommendSection"></div>
+    `;
+
+    // Render related products
+    renderRelatedProducts();
   }
 
+  // ===== Helper functions =====
+  function buildSpecsHtml(rich, product) {
+    const specs = rich.specs || [];
+    if (!specs.length) return '<p class="muted">暂无规格参数</p>';
+    return `
+      <table class="spec-table">
+        ${specs.map(([label, val]) => `<tr><th>${label}</th><td>${val}</td></tr>`).join('')}
+        <tr><th>品牌</th><td>乐居生活 LeJu Living</td></tr>
+        <tr><th>售后保障</th><td>7天无理由退换 · 一年质保 · 全国联保</td></tr>
+      </table>
+    `;
+  }
+
+  function buildStoryHtml(rich) {
+    if (!rich.story || !rich.story.length) return '';
+    return `<div class="detail-story">${rich.story.map(s => `
+      <div class="detail-story-block">
+        <div class="detail-story-img">${s.icon}</div>
+        <div class="detail-story-text">
+          <h3>${s.title}</h3>
+          <p>${s.text}</p>
+        </div>
+      </div>
+    `).join('')}</div>`;
+  }
+
+  function buildCareHtml(rich) {
+    if (!rich.care || !rich.care.length) return '<p style="color:var(--text-light)">暂无使用指南</p>';
+    return `<div class="care-grid">${rich.care.map(c => `
+      <div class="care-card">
+        <div class="care-icon">${c.icon}</div>
+        <div class="care-title">${c.title}</div>
+        <div class="care-desc">${c.desc}</div>
+      </div>
+    `).join('')}</div>`;
+  }
+
+  function buildFaqHtml(rich) {
+    if (!rich.faq || !rich.faq.length) return '<p style="color:var(--text-light)">暂无常见问题</p>';
+    return `<div class="faq-list">${rich.faq.map((f, i) => `
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">${f.q}</div>
+        <div class="faq-a">${f.a}</div>
+      </div>
+    `).join('')}
+    <div style="margin-top:20px;padding:16px;background:var(--bg-warm);font-size:.85rem;color:var(--text-light)">
+      💬 还有其他疑问？联系我们的客服：<strong>400-888-9999</strong>（工作日 9:00-18:00）
+    </div>
+    </div>`;
+  }
+
+  function buildReviewsHtml(rich) {
+    const reviews = rich.reviews || [];
+    if (!reviews.length) {
+      return `<div style="text-align:center;padding:40px;color:var(--text-muted)">
+        <div style="font-size:2.5rem;margin-bottom:12px">📝</div>
+        <p style="font-size:.95rem;margin-bottom:8px">暂无评价</p>
+        <p style="font-size:.82rem">购买后欢迎分享你的使用体验~</p>
+      </div>`;
+    }
+    const avgScore = (reviews.reduce((s, r) => s + r.stars, 0) / reviews.length).toFixed(1);
+    const starCounts = [5,4,3,2,1].map(s => ({ stars: s, count: reviews.filter(r => r.stars === s).length }));
+
+    return `
+      <div class="review-summary">
+        <div class="review-score">
+          <div class="review-score-num">${avgScore}</div>
+          <div class="review-score-stars">${'★'.repeat(Math.round(avgScore))}${'☆'.repeat(5-Math.round(avgScore))}</div>
+          <div class="review-score-count">${reviews.length} 条评价</div>
+        </div>
+        <div class="review-bars">
+          ${starCounts.map(s => `
+            <div class="review-bar-row">
+              <div class="review-bar-label">${s.stars}星</div>
+              <div class="review-bar"><div class="review-bar-fill" style="width:${reviews.length ? (s.count/reviews.length*100) : 0}%"></div></div>
+              <div class="review-bar-pct">${s.count}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      ${reviews.map(r => `
+        <div class="review-card">
+          <div class="review-card-top">
+            <div class="review-avatar">${r.name.charAt(0)}</div>
+            <div class="review-name">${r.name}</div>
+            <div class="review-date">${r.date}</div>
+          </div>
+          <div class="review-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div>
+          <div class="review-text">${r.text}</div>
+          ${r.tags ? r.tags.map(tag => `<span class="review-tag">${tag}</span>`).join('') : ''}
+        </div>
+      `).join('')}
+    `;
+  }
+
+  function renderRelatedProducts() {
+    const related = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
+    if (!related.length) return;
+    const section = document.getElementById('recommendSection');
+    section.innerHTML = `
+      <h2>搭配推荐 · 一起看看</h2>
+      <div class="products-grid">${related.map(p => {
+        const pName = getProductName(p);
+        return `
+          <div class="product-card">
+            <a href="product-detail.html?id=${p.id}">
+              <div class="product-image">${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}${p.icon}</div>
+            </a>
+            <div class="product-info">
+              <h3><a href="product-detail.html?id=${p.id}">${pName}</a></h3>
+              <div class="product-price">
+                <span class="price-current">${formatPrice(p.price)}</span>
+                ${p.originalPrice ? `<span class="price-original">${formatPrice(p.originalPrice)}</span>` : ''}
+              </div>
+              <div class="product-actions">
+                <button class="btn btn-primary btn-sm" onclick="addToCart(${p.id})">加入购物车</button>
+              </div>
+            </div>
+          </div>`;
+      }).join('')}</div>
+    `;
+  }
+
+  // ===== Interaction functions =====
   function getQty() { return parseInt(document.getElementById('qtyInput').value) || 1; }
   function changeQty(d) {
     const input = document.getElementById('qtyInput');
@@ -100,11 +325,27 @@
     if (isNaN(v) || v < 1) input.value = 1;
     if (v > product.stock) input.value = product.stock;
   }
-  function switchTab(btn, tabId) {
-    document.querySelectorAll('.tab-headers button').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+  function switchTabV2(btn, panelId) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.detail-tab-panel').forEach(p => { p.classList.remove('active'); p.style.display = 'none'; });
     btn.classList.add('active');
-    document.getElementById(tabId).style.display = 'block';
+    const panel = document.getElementById(panelId);
+    panel.style.display = 'block';
+    panel.classList.add('active');
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function selectVariant(el, type) {
+    el.parentElement.querySelectorAll('.detail-chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    const label = document.getElementById('selected_' + type);
+    if (label) label.textContent = el.textContent;
+  }
+  function switchGallery(el, icon) {
+    document.querySelectorAll('.detail-gallery-thumb').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+  function toggleFaq(item) {
+    item.classList.toggle('open');
   }
 
   updateCartCount();
