@@ -3,10 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>乐居生活 - LeJu Living</title>
+  <title>乐居生活 - LeJu Living | 精致家居 轻奢生活</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+
+<!-- 顶部促销条 -->
+<div class="promo-banner">
+  <span id="promoBanner">全场满 ¥99 免运费 &nbsp;|&nbsp; 新用户首单立减 ¥20</span>
+</div>
 
 <header class="site-header">
   <div class="container header-top">
@@ -28,15 +33,44 @@
   </nav>
 </header>
 
+<!-- Hero -->
 <section class="hero">
   <div class="container">
+    <div class="hero-label" id="heroLabel">AFFORDABLE LUXURY</div>
     <h1 id="heroTitle"></h1>
     <p id="heroSubtitle"></p>
-    <a href="products.html" class="btn btn-primary" style="margin-right:12px" id="heroShopBtn"></a>
+    <a href="products.html" class="btn btn-primary" style="margin-right:16px" id="heroShopBtn"></a>
     <a href="products.html?sale=1" class="btn btn-outline" id="heroSaleBtn"></a>
   </div>
 </section>
 
+<!-- 特色服务 -->
+<div class="container">
+  <div class="features-bar">
+    <div class="feature-item">
+      <span class="icon">&#x1F69A;</span>
+      <h4 id="feat1Title">免费配送</h4>
+      <p id="feat1Desc">满¥99包邮</p>
+    </div>
+    <div class="feature-item">
+      <span class="icon">&#x1F504;</span>
+      <h4 id="feat2Title">无忧退换</h4>
+      <p id="feat2Desc">7天无理由退货</p>
+    </div>
+    <div class="feature-item">
+      <span class="icon">&#x1F6E1;&#xFE0F;</span>
+      <h4 id="feat3Title">品质保障</h4>
+      <p id="feat3Desc">精选优质好物</p>
+    </div>
+    <div class="feature-item">
+      <span class="icon">&#x1F4AC;</span>
+      <h4 id="feat4Title">贴心客服</h4>
+      <p id="feat4Desc">工作日 9:00-18:00</p>
+    </div>
+  </div>
+</div>
+
+<!-- 分类 -->
 <section class="section">
   <div class="container">
     <h2 class="section-title" id="catTitle"></h2>
@@ -70,14 +104,19 @@
   </div>
 </section>
 
-<section class="section" style="background:#fff">
+<!-- 热销推荐 -->
+<section class="section" style="background:var(--bg-warm)">
   <div class="container">
     <h2 class="section-title" id="featuredTitle"></h2>
     <p class="section-subtitle" id="featuredSubtitle"></p>
     <div class="products-grid" id="featuredProducts"></div>
+    <div style="text-align:center;margin-top:48px">
+      <a href="products.html" class="btn btn-outline" style="border-color:var(--primary);color:var(--primary)">查看全部商品</a>
+    </div>
   </div>
 </section>
 
+<!-- 新品上市 -->
 <section class="section">
   <div class="container">
     <h2 class="section-title" id="newTitle"></h2>
@@ -86,6 +125,7 @@
   </div>
 </section>
 
+<!-- 页脚 -->
 <footer class="site-footer">
   <div class="container">
     <div class="footer-grid">
@@ -128,7 +168,6 @@
 <script src="js/app.js"></script>
 <script>
   applyPageI18n();
-  // 首页特有文本
   setText('heroTitle', t('hero_title'));
   setText('heroSubtitle', t('hero_subtitle'));
   setText('heroShopBtn', t('hero_shop_now'));
@@ -139,7 +178,6 @@
   setText('featuredSubtitle', t('featured_subtitle'));
   setText('newTitle', t('new_title'));
   setText('newSubtitle', t('new_subtitle'));
-  // 分类名称
   document.querySelectorAll('.cat-name').forEach(el => {
     el.textContent = t(el.dataset.key);
   });
