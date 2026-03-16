@@ -94,13 +94,11 @@
       <div class="detail-gallery-wrap">
         <div class="detail-gallery-main" id="mainGallery">
           ${product.badge ? `<div class="detail-gallery-badge">${product.badge}</div>` : ''}
-          ${product.icon}
+          ${renderProductImage(product, 'detail')}
         </div>
         <div class="detail-gallery-thumbs">
-          <div class="detail-gallery-thumb active" onclick="switchGallery(this, '${product.icon}')">${product.icon}</div>
-          <div class="detail-gallery-thumb" onclick="switchGallery(this, '${product.icon}')" style="font-size:1.2rem;color:var(--text-muted)">📐<br><span style="font-size:.6rem">尺寸图</span></div>
-          <div class="detail-gallery-thumb" onclick="switchGallery(this, '${product.icon}')" style="font-size:1.2rem;color:var(--text-muted)">📦<br><span style="font-size:.6rem">包装</span></div>
-          <div class="detail-gallery-thumb" onclick="switchGallery(this, '${product.icon}')" style="font-size:1.2rem;color:var(--text-muted)">🔍<br><span style="font-size:.6rem">细节</span></div>
+          ${product.images && product.images.length > 1 ? renderGalleryThumbs(product) : `
+          <div class="detail-gallery-thumb active">${product.icon}</div>`}
         </div>
       </div>
       <div class="detail-info detail-top-info">
@@ -293,7 +291,7 @@
         return `
           <div class="product-card">
             <a href="product-detail.html?id=${p.id}">
-              <div class="product-image">${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}${p.icon}</div>
+              <div class="product-image">${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}${renderProductImage(p, 'card')}</div>
             </a>
             <div class="product-info">
               <h3><a href="product-detail.html?id=${p.id}">${pName}</a></h3>
@@ -340,9 +338,13 @@
     const label = document.getElementById('selected_' + type);
     if (label) label.textContent = el.textContent;
   }
-  function switchGallery(el, icon) {
+  function switchGalleryImg(el, src) {
     document.querySelectorAll('.detail-gallery-thumb').forEach(t => t.classList.remove('active'));
     el.classList.add('active');
+    const gallery = document.getElementById('mainGallery');
+    const badge = gallery.querySelector('.detail-gallery-badge');
+    const badgeHtml = badge ? badge.outerHTML : '';
+    gallery.innerHTML = badgeHtml + `<img src="${src}" alt="${product.name}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';this.parentElement.insertAdjacentHTML('beforeend','<span style=font-size:10rem>${product.icon}</span>')">`;
   }
   function toggleFaq(item) {
     item.classList.toggle('open');

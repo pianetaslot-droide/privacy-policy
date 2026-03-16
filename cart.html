@@ -67,7 +67,7 @@
       subtotal += lineTotal;
       itemsHtml += `
         <div class="cart-item">
-          <div class="cart-item-image">${p.icon}</div>
+          <div class="cart-item-image">${renderProductImage(p, 'card')}</div>
           <div class="cart-item-info">
             <h3><a href="product-detail.html?id=${p.id}">${getProductName(p)}</a></h3>
             <p class="spec">${getCategoryName(p.category)}</p>
