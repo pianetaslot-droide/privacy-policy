@@ -967,6 +967,106 @@ hr.sb-divider { border: none; border-top: 1px solid var(--sb-border-light); marg
   background: var(--sb-accent-light);
 }
 
+/* ========== 商品图片上传 ========== */
+.img-upload-area { margin-bottom: 8px; }
+.img-preview-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.img-preview-item {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border: 1px solid var(--sb-border);
+  border-radius: var(--sb-radius);
+  overflow: hidden;
+  background: var(--sb-bg);
+  cursor: grab;
+  transition: all .2s ease;
+}
+.img-preview-item:first-child { border-color: var(--sb-accent); }
+.img-preview-item:first-child::after {
+  content: '主图';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--sb-accent);
+  color: #fff;
+  font-size: .6rem;
+  text-align: center;
+  padding: 1px 0;
+  font-weight: 600;
+}
+.img-preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.img-preview-item:hover { box-shadow: var(--sb-shadow-md); transform: translateY(-2px); }
+.img-preview-item.dragging { opacity: .4; border: 2px dashed var(--sb-accent); }
+.img-preview-item.drag-over { border: 2px solid var(--sb-accent); }
+.img-preview-del {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  background: rgba(0,0,0,.6);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: .65rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.img-preview-item:hover .img-preview-del { opacity: 1; }
+.img-preview-order {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: rgba(0,0,0,.5);
+  color: #fff;
+  border-radius: 50%;
+  font-size: .55rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+.img-drop-zone {
+  border: 2px dashed var(--sb-border);
+  border-radius: var(--sb-radius);
+  padding: 28px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .25s ease;
+  background: var(--sb-bg);
+}
+.img-drop-zone:hover, .img-drop-zone.drag-active {
+  border-color: var(--sb-accent);
+  background: var(--sb-accent-light);
+}
+.img-drop-icon { font-size: 1.8rem; margin-bottom: 6px; }
+.img-drop-text { font-size: .85rem; color: var(--sb-text); font-weight: 500; }
+.img-drop-hint { font-size: .72rem; color: var(--sb-text-muted); margin-top: 4px; }
+.img-drop-zone.has-images {
+  padding: 12px;
+  border-style: dashed;
+}
+.img-drop-zone.has-images .img-drop-icon { font-size: 1.2rem; margin-bottom: 2px; }
+.img-drop-zone.has-images .img-drop-text { font-size: .75rem; }
+.img-drop-zone.has-images .img-drop-hint { display: none; }
+
 /* ========== 售后卡片 ========== */
 .as-card {
   background: var(--sb-card);

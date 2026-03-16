@@ -415,9 +415,24 @@
           <div class="sb-fg"><label>详细说明</label><textarea class="sb-textarea" id="eDetail" rows="2" placeholder="详细规格说明..."></textarea></div>
         </div>
         <div>
-          <div class="sb-fg"><label>商品图标</label><input type="text" class="sb-input" id="eIcon" placeholder="🍵" maxlength="4" style="font-size:1.4rem;text-align:center"><div class="hint">使用 Emoji 作图标</div></div>
+          <div class="sb-fg"><label>商品图标</label><input type="text" class="sb-input" id="eIcon" placeholder="🍵" maxlength="4" style="font-size:1.4rem;text-align:center"><div class="hint">图片加载失败时的备用显示</div></div>
           <div class="sb-fg"><label>状态</label><select class="sb-select" id="eStatus"><option value="active">已上架</option><option value="draft">草稿</option><option value="archived">已归档</option></select></div>
         </div>
+      </div>
+      <hr class="sb-divider">
+      <h4 class="bold mb8" style="font-size:.85rem">商品图片 <span class="muted" style="font-weight:400;font-size:.75rem">（建议上传3-5张，第一张为主图）</span></h4>
+      <div class="img-upload-area" id="imgUploadArea">
+        <div class="img-preview-list" id="imgPreviewList"></div>
+        <div class="img-drop-zone" id="imgDropZone" onclick="document.getElementById('imgFileInput').click()">
+          <input type="file" id="imgFileInput" accept="image/*" multiple style="display:none" onchange="handleImageFiles(this.files)">
+          <div class="img-drop-icon">📷</div>
+          <div class="img-drop-text">点击上传 或 拖拽图片到此处</div>
+          <div class="img-drop-hint">支持 JPG / PNG / WebP，单张不超过 5MB</div>
+        </div>
+      </div>
+      <div class="sb-fg" style="margin-top:8px">
+        <label>图片链接 <span class="muted" style="font-weight:400;font-size:.75rem">（也可以直接粘贴外部图片URL，每行一个）</span></label>
+        <textarea class="sb-textarea" id="eImageUrls" rows="2" placeholder="https://images.unsplash.com/photo-xxx?w=600&#10;https://example.com/photo2.jpg" oninput="syncUrlsToPreview()"></textarea>
       </div>
       <hr class="sb-divider">
       <h4 class="bold mb8" style="font-size:.85rem">价格与库存</h4>
@@ -987,6 +1002,8 @@ function openProductModal(p) {
   $('eIsNew').checked = p ? !!p.isNew : false;
   $('eStatus').value = p ? (p.status||'active') : 'active';
   $('eSku').value = p ? (p.sku||'') : '';
+  // Load images
+  loadImagesToUI(p ? (p.images || []) : []);
   // Load variants
   if (p && p.variants && p.variants.length) {
     loadVariantsToUI(p.variants);
@@ -1005,9 +1022,10 @@ function saveProduct() {
   if (isNaN(stock)||stock<0) { toast('请输入有效库存','err'); return; }
   const prods=getP(), editId=$('eId').value, status=$('eStatus').value;
   const variants = $('eHasVariants').checked ? getVariantsFromUI() : [];
+  const images = getImagesFromUI();
   const data = {name, icon:$('eIcon').value||'📦', category:$('eCat').value, price, originalPrice:parseFloat($('eOrigPrice').value)||null,
     stock, description:$('eDesc').value, detail:$('eDetail').value, badge:$('eBadge').value,
-    featured:$('eFeatured').checked, isNew:$('eIsNew').checked, active:status!=='archived', status, sku:$('eSku').value, variants};
+    featured:$('eFeatured').checked, isNew:$('eIsNew').checked, active:status!=='archived', status, sku:$('eSku').value, images, variants};
   if (editId) { const idx=prods.findIndex(p=>p.id===parseInt(editId)); if(idx>=0)Object.assign(prods[idx],data); toast('商品已更新','ok'); }
   else { data.id = prods.length>0 ? Math.max(...prods.map(p=>p.id))+1 : 1; prods.push(data); toast('商品已添加','ok'); }
   setP(prods); closeModal('prodModal'); renderProducts();
@@ -1803,7 +1821,144 @@ function loadVariantsToUI(variants) {
   });
 }
 
+// ===== 商品图片管理 =====
+let productImages = []; // 当前编辑的图片列表 [{src, type:'url'|'base64'}]
+
+function initImageUpload() {
+  const dropZone = $('imgDropZone');
+  if (!dropZone) return;
+  ['dragenter','dragover'].forEach(evt => {
+    dropZone.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); dropZone.classList.add('drag-active'); });
+  });
+  ['dragleave','drop'].forEach(evt => {
+    dropZone.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); dropZone.classList.remove('drag-active'); });
+  });
+  dropZone.addEventListener('drop', e => {
+    const files = e.dataTransfer.files;
+    if (files.length) handleImageFiles(files);
+  });
+}
+
+function handleImageFiles(files) {
+  Array.from(files).forEach(file => {
+    if (!file.type.startsWith('image/')) { toast('只支持图片文件','err'); return; }
+    if (file.size > 5 * 1024 * 1024) { toast(`${file.name} 超过5MB限制`,'err'); return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+      productImages.push({ src: e.target.result, type: 'base64', name: file.name });
+      renderImagePreviews();
+      syncPreviewToUrls();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function syncUrlsToPreview() {
+  const text = $('eImageUrls').value.trim();
+  const urls = text ? text.split('\n').map(u => u.trim()).filter(u => u && (u.startsWith('http://') || u.startsWith('https://'))) : [];
+  // Keep base64 images, replace URL images
+  productImages = productImages.filter(img => img.type === 'base64');
+  urls.forEach(url => { productImages.push({ src: url, type: 'url' }); });
+  renderImagePreviews();
+}
+
+function syncPreviewToUrls() {
+  const urls = productImages.filter(img => img.type === 'url').map(img => img.src);
+  $('eImageUrls').value = urls.join('\n');
+}
+
+function removeImage(index) {
+  productImages.splice(index, 1);
+  renderImagePreviews();
+  syncPreviewToUrls();
+}
+
+function setAsMainImage(index) {
+  if (index === 0) return;
+  const item = productImages.splice(index, 1)[0];
+  productImages.unshift(item);
+  renderImagePreviews();
+  syncPreviewToUrls();
+}
+
+function renderImagePreviews() {
+  const list = $('imgPreviewList');
+  const dropZone = $('imgDropZone');
+  if (!list) return;
+
+  if (productImages.length === 0) {
+    list.innerHTML = '';
+    dropZone.classList.remove('has-images');
+    return;
+  }
+
+  dropZone.classList.add('has-images');
+
+  list.innerHTML = productImages.map((img, i) => `
+    <div class="img-preview-item" draggable="true" data-img-idx="${i}"
+         ondragstart="imgDragStart(event,${i})" ondragover="imgDragOver(event)" ondragenter="imgDragEnter(event)"
+         ondragleave="imgDragLeave(event)" ondrop="imgDrop(event,${i})" ondragend="imgDragEnd(event)"
+         ondblclick="setAsMainImage(${i})" title="${i === 0 ? '主图（商品卡片显示）' : '双击设为主图'}">
+      <span class="img-preview-order">${i + 1}</span>
+      <img src="${img.src}" alt="商品图${i+1}" onerror="this.parentElement.innerHTML='<div style=display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:.7rem;color:#999>加载失败</div>'">
+      <button class="img-preview-del" onclick="event.stopPropagation();removeImage(${i})" title="删除">✕</button>
+    </div>
+  `).join('');
+}
+
+// Drag & drop reorder
+let imgDragIdx = null;
+function imgDragStart(e, idx) {
+  imgDragIdx = idx;
+  e.target.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+function imgDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
+function imgDragEnter(e) {
+  e.preventDefault();
+  const item = e.target.closest('.img-preview-item');
+  if (item) item.classList.add('drag-over');
+}
+function imgDragLeave(e) {
+  const item = e.target.closest('.img-preview-item');
+  if (item) item.classList.remove('drag-over');
+}
+function imgDrop(e, targetIdx) {
+  e.preventDefault();
+  const item = e.target.closest('.img-preview-item');
+  if (item) item.classList.remove('drag-over');
+  if (imgDragIdx === null || imgDragIdx === targetIdx) return;
+  const moved = productImages.splice(imgDragIdx, 1)[0];
+  productImages.splice(targetIdx, 0, moved);
+  renderImagePreviews();
+  syncPreviewToUrls();
+}
+function imgDragEnd(e) {
+  e.target.classList.remove('dragging');
+  document.querySelectorAll('.img-preview-item').forEach(el => el.classList.remove('drag-over','dragging'));
+  imgDragIdx = null;
+}
+
+function loadImagesToUI(images) {
+  productImages = [];
+  if (!images || !images.length) {
+    renderImagePreviews();
+    $('eImageUrls').value = '';
+    return;
+  }
+  images.forEach(src => {
+    productImages.push({ src, type: src.startsWith('data:') ? 'base64' : 'url' });
+  });
+  renderImagePreviews();
+  $('eImageUrls').value = images.filter(s => !s.startsWith('data:')).join('\n');
+}
+
+function getImagesFromUI() {
+  return productImages.map(img => img.src);
+}
+
 // ===== 初始化 =====
+initImageUpload();
 renderDashboard();
 </script>
 </body>
